@@ -17,7 +17,6 @@
     "react-native-elements": "^0.19.1",
     "react-native-form": "^2.1.2",
     "react-native-loading-spinner-overlay": "^0.5.2",
-    "react-native-phone-auth-component": "^0.1.0",
     "react-navigation": "2.0.0"
   },
   "devDependencies": {
