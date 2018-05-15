@@ -1,12 +1,13 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import CategoryScreen from '../screens/CategoryScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import CalendarScreen from '../screens/CalendarScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -14,6 +15,7 @@ const HomeStack = createStackNavigator({
 
 HomeStack.navigationOptions = {
   tabBarLabel: 'Home',
+  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -32,6 +34,7 @@ const CategoryStack = createStackNavigator({
 
 CategoryStack.navigationOptions = {
   tabBarLabel: 'Category',
+  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -40,12 +43,29 @@ CategoryStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const CalendarStack = createStackNavigator({
+  Calendar: CalendarScreen,
 });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+CalendarStack.navigationOptions = {
+  tabBarLabel: 'Calendar',
+  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
+    />
+  ),
+};
+
+
+const ProfileStack = createStackNavigator({
+  Profile: ProfileScreen,
+});
+
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Profile',
+  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -54,8 +74,10 @@ SettingsStack.navigationOptions = {
   ),
 };
 
+
 export default createBottomTabNavigator({
   HomeStack,
   CategoryStack,
-  SettingsStack,
+  CalendarStack,
+  ProfileStack,
 });
