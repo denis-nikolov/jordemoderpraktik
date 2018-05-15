@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import {
   AppRegistry,
   StyleSheet,
@@ -11,11 +10,12 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-
 import Frisbee from 'frisbee';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
+import firebase from 'firebase';
+import axios from 'axios';
 
 const api = new Frisbee({
   baseURI: 'http://localhost:3000',
@@ -24,21 +24,22 @@ const api = new Frisbee({
     'Content-Type': 'application/json'
   }
 });
-
 const MAX_LENGTH_CODE = 6;
 const MAX_LENGTH_NUMBER = 20;
-
 // if you want to customize the country picker
 const countryPickerCustomStyles = {};
-
 // your brand's theme primary color
 const brandColor = '#4B5D63';
+//Firebase functions url
+const URL = 'https://us-central1-drink-and-drive.cloudfunctions.net';
 
 export default class example extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      phone:'',
+      code: '',
       enterCode: false,
       spinner: false,
       country: {
@@ -48,28 +49,40 @@ export default class example extends Component {
     };
   }
 
+  componentWillMount() {
+    var config = {
+      apiKey: "AIzaSyAZzqPWgp3AfMfnYOS9_TPofwfBT716Qrk",
+      authDomain: "drink-and-drive.firebaseapp.com",
+      databaseURL: "https://drink-and-drive.firebaseio.com",
+      projectId: "drink-and-drive",
+      storageBucket: "drink-and-drive.appspot.com",
+      messagingSenderId: "943601859777"
+    };
+
+    firebase.initializeApp(config);
+  }
+
+
   _getCode = () => {
 
-    this.setState({ spinner: true });
+    let phoneNumber = this.refs.form.getValues()["phoneNumber"];
+
+    this.setState({
+      spinner: true,
+      phone: phoneNumber,
+    });
 
     setTimeout(async () => {
 
       try {
-
-        const res = await api.post('/v1/verifications', {
-          body: {
-            ...this.refs.form.getValues(),
-            ...this.state.country
-          }
-        });
-
-        if (res.err) throw res.err;
+        await axios.post(`${URL}/createUser`,{ phone: phoneNumber });
+        await axios.post(`${URL}/requestPassword`,{ phone: phoneNumber });
 
         this.setState({
           spinner: false,
-          enterCode: true,
-          verification: res.body
+          enterCode: true
         });
+
         this.refs.form.refs.textInput.setNativeProps({ text: '' });
 
         setTimeout(() => {
@@ -98,15 +111,10 @@ export default class example extends Component {
     setTimeout(async () => {
 
       try {
-
-        const res = await api.put('/v1/verifications', {
-          body: {
-            ...this.refs.form.getValues(),
-            ...this.state.country
-          }
-        });
-
-        if (res.err) throw res.err;
+        console.log(this.refs.form.getValues());
+        // let { data } = await axios.post(`${URL}/verifyPassword`, {
+        //   phone: this.state.phone, code: this.state.code
+        // });
 
         this.refs.form.refs.textInput.blur();
         // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
@@ -220,51 +228,51 @@ export default class example extends Component {
         imageStyle={{resizeMode:'stretch'}}
         style={styles.backgroundImage}
       >
-      <View style={styles.container}>
+        <View style={styles.container}>
 
-        <Text style={styles.header}>{headerText}</Text>
+          <Text style={styles.header}>{headerText}</Text>
 
-        <Form ref={'form'} style={styles.form}>
+          <Form ref={'form'} style={styles.form}>
 
-          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}>
 
-            {this._renderCountryPicker()}
-            {this._renderCallingCode()}
+              {this._renderCountryPicker()}
+              {this._renderCallingCode()}
 
-            <TextInput
-              ref={'textInput'}
-              name={this.state.enterCode ? 'code' : 'phoneNumber' }
-              type={'TextInput'}
-              underlineColorAndroid={'transparent'}
-              autoCapitalize={'none'}
-              autoCorrect={false}
-              onChangeText={this._onChangeText}
-              placeholder={this.state.enterCode ? '_ _ _ _ _ _' : 'Phone Number'}
-              keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-              style={[ styles.textInput, textStyle ]}
-              returnKeyType='go'
-              autoFocus
-              placeholderTextColor={brandColor}
-              selectionColor={brandColor}
-              maxLength={this.state.enterCode ? 6 : 20}
-              onSubmitEditing={this._getSubmitAction} />
+              <TextInput
+                ref={'textInput'}
+                name={this.state.enterCode ? 'code' : 'phoneNumber' }
+                type={'TextInput'}
+                underlineColorAndroid={'transparent'}
+                autoCapitalize={'none'}
+                autoCorrect={false}
+                onChangeText={this._onChangeText}
+                placeholder={this.state.enterCode ? '_ _ _ _ _ _' : 'Phone Number'}
+                keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+                style={[ styles.textInput, textStyle ]}
+                returnKeyType='go'
+                autoFocus
+                placeholderTextColor={brandColor}
+                selectionColor={brandColor}
+                maxLength={this.state.enterCode ? 6 : 20}
+                onSubmitEditing={this._getSubmitAction} />
 
-          </View>
+            </View>
 
-          <TouchableOpacity style={styles.button} onPress={this._getSubmitAction}>
-            <Text style={styles.buttonText}>{ buttonText }</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => this._getSubmitAction()}>
+              <Text style={styles.buttonText}>{ buttonText }</Text>
+            </TouchableOpacity>
 
-          {this._renderFooter()}
+            {this._renderFooter()}
 
-        </Form>
+          </Form>
 
-        <Spinner
-          visible={this.state.spinner}
-          textContent={'One moment...'}
-          textStyle={{ color: '#fff' }} />
+          <Spinner
+            visible={this.state.spinner}
+            textContent={'One moment...'}
+            textStyle={{ color: '#fff' }} />
 
-      </View>
+        </View>
       </ImageBackground>
     );
   }
@@ -283,6 +291,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    justifyContent: 'center'
   },
   header: {
     textAlign: 'center',
