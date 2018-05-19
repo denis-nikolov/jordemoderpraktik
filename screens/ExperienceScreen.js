@@ -1,22 +1,23 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, FlatList } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { ListItem, CheckBox } from 'react-native-elements';
-import { ImageBackground, Image } from 'react-native';
-import { LinearGradient } from 'expo';
+import { ImageBackground } from 'react-native';
+import Icon from 'react-native-ionicons'
 
 
-const list = [
-  {
-    title: 'Experience 1',
-  },
-  {
-    title: 'Experience 2',
-  },
-  {
-    title: 'Experience 3',
-  },
-]
+const items = [
+  'Experience 1',
+  'Experience 2',
+  'Experience 3',
+  'Experience 4',
+  'Experience 5',
+  'Experience 6',
+  'Experience 7',
+  'Experience 8',
+  'Experience 9',
+  'Experience 10',
+];
 
 export default class CategoryScreen extends React.Component {
   static navigationOptions = {
@@ -26,8 +27,18 @@ export default class CategoryScreen extends React.Component {
   };
 
 state = {
-  checked: false,
+  checked: [],
 }
+
+checkItem = item => {
+    const { checked } = this.state;
+
+    if (!checked.includes(item)) {
+      this.setState({ checked: [...checked, item] });
+    } else {
+      this.setState({ checked: checked.filter(a => a !== item) });
+    }
+  };
 
   render() {
     return (
@@ -37,23 +48,22 @@ state = {
         style={{width: '100%', height: '103%'}}
       >
 
-            <ScrollView>
-                {
-                  list.map((item, i) => (
-                    <ListItem
-                      key={i}
-                      title={item.title}
-                      leftIcon={{ name: item.icon }}
-                    />
-
-                    <CheckBox>
-                    title='Click Here'
-                    checked={this.state.checked}
-                    </CheckBox>
-
-                  ))
-                }
-            </ScrollView>
+      <ScrollView>
+          <FlatList style={styles.container}
+            data={items}
+            extraData={this.state}
+            renderItem={({ item }) => (
+              <CheckBox
+                title={item}
+                onPress={() => this.checkItem(item)}
+                checked={this.state.checked.includes(item)}
+                checkedColor='red'
+                containerStyle={styles.checkbox}
+                iconType='check-square'
+              />
+            )}
+          />
+      </ScrollView>
 
       </ImageBackground>
 
@@ -62,5 +72,17 @@ state = {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  checkbox: {
+    backgroundColor: 'transparent',
+    borderColor: '#A0A0A0',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderTopWidth: 0,
+    paddingTop: 50,
+  }
 
 });
