@@ -1,37 +1,35 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-import { ListItem } from 'react-native-elements';
+import { ListItem, CheckBox } from 'react-native-elements';
 import { ImageBackground, Image } from 'react-native';
 import { LinearGradient } from 'expo';
-import { StackNavigator } from 'react-navigation';
+
 
 const list = [
   {
-    title: 'Category 1',
+    title: 'Experience 1',
   },
   {
-    title: 'Category 2',
+    title: 'Experience 2',
   },
   {
-    title: 'Category 3',
+    title: 'Experience 3',
   },
 ]
 
 export default class CategoryScreen extends React.Component {
   static navigationOptions = {
-    title: 'Categories',
+    title: 'Experiences',
     headerStyle: { backgroundColor: '#add8e6' },
     headerTitleStyle: { color: '#4B5D63' },
   };
 
-  goToExperienceScreen() {
-        this.props.navigation.navigate('Experience');
-    }
+state = {
+  checked: false,
+}
 
   render() {
-    const { navigate } = this.props.navigation;
-
     return (
 
       <ImageBackground
@@ -42,11 +40,17 @@ export default class CategoryScreen extends React.Component {
             <ScrollView>
                 {
                   list.map((item, i) => (
-                    <ListItem onPress={() => this.goToExperienceScreen()}
+                    <ListItem
                       key={i}
                       title={item.title}
                       leftIcon={{ name: item.icon }}
                     />
+
+                    <CheckBox>
+                    title='Click Here'
+                    checked={this.state.checked}
+                    </CheckBox>
+
                   ))
                 }
             </ScrollView>

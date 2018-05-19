@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ImageBackground,
 } from 'react-native';
 
 export default class ProfileScreen extends React.Component {
@@ -19,17 +20,14 @@ export default class ProfileScreen extends React.Component {
 
   render() {
      return (
-     <Image source={require('../assets/images/background_gradient.jpg')}
-     imageStyle={{resizeMode:'stretch'}}
-     style={styles.backgroundImage}
-     />
+       <ImageBackground source={require('../assets/images/background_gradient.jpg')}
+       style={{width: '100%', height: '103%'}}>
+       </ImageBackground>
 
      );
    }
  }
 
  const styles = StyleSheet.create({
-   backgroundImage: {
-     flex: 1,
-   },
+
  });

@@ -21,6 +21,8 @@
     "react-native-form": "^2.1.2",
     "react-native-loading-spinner-overlay": "^0.5.2",
     "react-native-phone-auth-component": "^0.1.0",
+    "react-native-progress": "^3.4.0",
+    "react-native-progress-bar-animated": "^1.0.6",
     "react-navigation": "2.0.0"
   },
   "devDependencies": {

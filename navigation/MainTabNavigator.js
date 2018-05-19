@@ -2,12 +2,13 @@ import React from 'react';
 import { Platform, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
-
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import CategoryScreen from '../screens/CategoryScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import ExperienceScreen from '../screens/ExperienceScreen';
+
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -30,6 +31,7 @@ HomeStack.navigationOptions = {
 
 const CategoryStack = createStackNavigator({
   Category: CategoryScreen,
+  Experience: ExperienceScreen,
 });
 
 CategoryStack.navigationOptions = {
