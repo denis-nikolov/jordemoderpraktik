@@ -9,21 +9,15 @@ import {
   Platform,
   Alert,
   ImageBackground,
+  ScrollView
 } from 'react-native';
-import Frisbee from 'frisbee';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 import firebase from 'firebase';
 import axios from 'axios';
 
-const api = new Frisbee({
-  baseURI: 'http://localhost:3000',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-});
+
 const MAX_LENGTH_CODE = 6;
 const MAX_LENGTH_NUMBER = 20;
 // if you want to customize the country picker
@@ -34,7 +28,6 @@ const brandColor = '#4B5D63';
 const URL = 'https://us-central1-drink-and-drive.cloudfunctions.net';
 
 export default class example extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -69,7 +62,7 @@ export default class example extends Component {
 
     this.setState({
       spinner: true,
-      phone: phoneNumber,
+      phone: phoneNumber
     });
 
     setTimeout(async () => {
@@ -106,15 +99,22 @@ export default class example extends Component {
 
   _verifyCode = () => {
 
-    this.setState({ spinner: true });
+    let authCode = this.refs.form.getValues()["code"];
+
+    this.setState({
+      spinner: true,
+      code: authCode,
+     });
+
+     console.log('Phone ' + this.state.phone + 'Code ' + authCode);
 
     setTimeout(async () => {
 
       try {
-        console.log(this.refs.form.getValues());
-        // let { data } = await axios.post(`${URL}/verifyPassword`, {
-        //   phone: this.state.phone, code: this.state.code
-        // });
+
+         let { data } = await axios.post(`${URL}/verifyPassword`, {
+           phone: this.state.phoneNumber, code: authCode
+         });
 
         this.refs.form.refs.textInput.blur();
         // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
@@ -137,8 +137,6 @@ export default class example extends Component {
 
   _onChangeText = (val) => {
     if (!this.state.enterCode) return;
-    if (val.length === MAX_LENGTH_CODE)
-    this._verifyCode();
   }
 
   _tryAgain = () => {
@@ -148,6 +146,7 @@ export default class example extends Component {
   }
 
   _getSubmitAction = () => {
+    console.log(JSON.stringify(this.refs.form.getValues()));
     this.state.enterCode ? this._verifyCode() : this._getCode();
   }
 
@@ -228,7 +227,7 @@ export default class example extends Component {
         imageStyle={{resizeMode:'stretch'}}
         style={styles.backgroundImage}
       >
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
 
           <Text style={styles.header}>{headerText}</Text>
 
@@ -272,7 +271,7 @@ export default class example extends Component {
             textContent={'One moment...'}
             textStyle={{ color: '#fff' }} />
 
-        </View>
+        </ScrollView>
       </ImageBackground>
     );
   }
@@ -290,8 +289,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    justifyContent: 'center'
+    marginTop: 50
   },
   header: {
     textAlign: 'center',
