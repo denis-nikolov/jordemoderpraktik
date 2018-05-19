@@ -48,6 +48,7 @@ checkItem = item => {
         style={{width: '100%', height: '103%'}}
       >
 
+<<<<<<< HEAD
       <ScrollView>
           <FlatList style={styles.container}
             data={items}
@@ -64,6 +65,25 @@ checkItem = item => {
             )}
           />
       </ScrollView>
+=======
+            <ScrollView>
+                {
+                  list.map((item, i) => (
+                    <ListItem
+                      key={i}
+                      title={item.title}
+                      leftIcon={{ name: item.icon }}
+                    />
+
+                    // <CheckBox>
+                    // title='Click Here'
+                    // checked={this.state.checked}
+                    // </CheckBox>
+
+                  ))
+                }
+            </ScrollView>
+>>>>>>> 9460aba31548fde7eec86fe1a8a86b20417e674a
 
       </ImageBackground>
 
