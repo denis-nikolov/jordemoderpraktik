@@ -9,12 +9,13 @@ import {
   Platform,
   Alert,
   ImageBackground,
-  ScrollView
+  ScrollView,
+  AsyncStorage
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
-import firebase from 'firebase';
+import firebase from 'firebase'
 import axios from 'axios';
 
 
@@ -55,10 +56,9 @@ export default class example extends Component {
     firebase.initializeApp(config);
   }
 
-
   _getCode = () => {
 
-    let phoneNumber = this.refs.form.getValues()["phoneNumber"];
+    const phoneNumber = this.refs.form.getValues()["phoneNumber"];
 
     this.setState({
       spinner: true,
@@ -106,33 +106,31 @@ export default class example extends Component {
       code: authCode,
      });
 
-     console.log('Phone ' + this.state.phone + 'Code ' + authCode);
-
-    setTimeout(async () => {
+     setTimeout(async () => {
 
       try {
 
          let { data } = await axios.post(`${URL}/verifyPassword`, {
-           phone: this.state.phoneNumber, code: authCode
+           phone: this.state.phone, code: authCode
          });
 
+        await AsyncStorage.setItem('userToken', JSON.stringify(data));
+
         this.refs.form.refs.textInput.blur();
-        // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
         this.setState({ spinner: false });
         setTimeout(() => {
           Alert.alert('Success!', 'You have successfully verified your phone number');
         }, 100);
 
+        this.props.navigation.navigate('Main');
+
       } catch (err) {
-        // <https://github.com/niftylettuce/react-native-loading-spinner-overlay/issues/30#issuecomment-276845098>
         this.setState({ spinner: false });
         setTimeout(() => {
           Alert.alert('Oops!', err.message);
         }, 100);
       }
-
     }, 100);
-
   }
 
   _onChangeText = (val) => {
@@ -146,7 +144,6 @@ export default class example extends Component {
   }
 
   _getSubmitAction = () => {
-    console.log(JSON.stringify(this.refs.form.getValues()));
     this.state.enterCode ? this._verifyCode() : this._getCode();
   }
 
@@ -227,7 +224,10 @@ export default class example extends Component {
         imageStyle={{resizeMode:'stretch'}}
         style={styles.backgroundImage}
       >
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          keyboardShouldPersistTaps='always'
+        >
 
           <Text style={styles.header}>{headerText}</Text>
 

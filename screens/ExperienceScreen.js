@@ -75,10 +75,10 @@ checkItem = item => {
                       leftIcon={{ name: item.icon }}
                     />
 
-                    <CheckBox>
-                    title='Click Here'
-                    checked={this.state.checked}
-                    </CheckBox>
+                    // <CheckBox>
+                    // title='Click Here'
+                    // checked={this.state.checked}
+                    // </CheckBox>
 
                   ))
                 }
