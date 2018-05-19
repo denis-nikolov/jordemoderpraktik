@@ -1,7 +1,6 @@
 import React from 'react';
 import { Notifications } from 'expo';
 import { createSwitchNavigator } from 'react-navigation';
-
 import MainTabNavigator from './MainTabNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
@@ -14,7 +13,7 @@ const AppNavigator = createSwitchNavigator(
     Auth: AuthenticationScreen,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Main',
   }
 );
 
