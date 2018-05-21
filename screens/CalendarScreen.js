@@ -9,7 +9,7 @@ export default class CalendarScreen extends React.Component {
   static navigationOptions = {
     title: 'Calendar',
     headerStyle: { backgroundColor: '#add8e6' },
-    headerTitleStyle: { color: '#4B5D63' },
+    headerTitleStyle: { color: '#545454' },
   };
 
   render() {
