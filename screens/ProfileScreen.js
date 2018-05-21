@@ -14,7 +14,10 @@ import {
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
     title: 'Profile',
-    headerStyle: { backgroundColor: '#add8e6' },
+    headerStyle: {
+      backgroundColor: '#add8e6',
+      borderBottomWidth: 0,
+     },
     headerTitleStyle: { color: '#545454' },
   };
 

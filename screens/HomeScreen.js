@@ -18,7 +18,10 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     title: 'Dashboard',
-    headerStyle: { backgroundColor: '#add8e6' },
+    headerStyle: {
+      backgroundColor: '#add8e6',
+      borderBottomWidth: 0, 
+    },
     headerTitleStyle: { color: '#545454' },
   };
 

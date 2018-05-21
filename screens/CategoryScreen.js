@@ -23,8 +23,8 @@ export default class CategoryScreen extends React.Component {
     title: 'Categories',
     headerStyle: {
       backgroundColor: '#add8e6',
-      borderBottomColor: '#496595',
-      borderBottomWidth: 1,
+      //borderBottomColor: '#496595',
+      borderBottomWidth: 0,
      },
     headerTitleStyle: { color: '#545454' },
   };

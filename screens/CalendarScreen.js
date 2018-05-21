@@ -33,7 +33,10 @@ export default class CalendarScreen extends React.Component {
 
     return {
       headerTitle: 'Calendar',
-      headerStyle: { backgroundColor: '#add8e6' },
+      headerStyle: {
+        backgroundColor: '#add8e6',
+        borderBottomWidth: 0, 
+      },
       headerTitleStyle: { color: '#4B5D63' },
       headerRight: (
         <Button onPress={params.handleCreateEvent} title="Add"/>
