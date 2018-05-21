@@ -8,21 +8,25 @@ import { StackNavigator } from 'react-navigation';
 
 const list = [
   {
-    title: 'Category 1',
+    title: 'Svangreomsorg i jordemoderkonsultation',
   },
   {
-    title: 'Category 2',
+    title: 'Svangreomsorg i jordemoderkonsultation',
   },
   {
-    title: 'Category 3',
+    title: 'Svangreomsorg i jordemoderkonsultation',
   },
 ]
 
 export default class CategoryScreen extends React.Component {
   static navigationOptions = {
     title: 'Categories',
-    headerStyle: { backgroundColor: '#add8e6' },
-    headerTitleStyle: { color: '#4B5D63' },
+    headerStyle: {
+      backgroundColor: '#add8e6',
+      borderBottomColor: '#496595',
+      borderBottomWidth: 1,
+     },
+    headerTitleStyle: { color: '#545454' },
   };
 
   goToExperienceScreen() {
@@ -42,10 +46,13 @@ export default class CategoryScreen extends React.Component {
             <ScrollView>
                 {
                   list.map((item, i) => (
-                    <ListItem onPress={() => this.goToExperienceScreen()}
+                    <ListItem
+                      containerStyle={styles.listItems}
+                      onPress={() => this.goToExperienceScreen()}
                       key={i}
                       title={item.title}
-                      leftIcon={{ name: item.icon }}
+                      chevronColor='#496595'
+                      rightIcon={{name: 'play-arrow'}}
                     />
                   ))
                 }
@@ -59,4 +66,10 @@ export default class CategoryScreen extends React.Component {
 
 const styles = StyleSheet.create({
 
+  listItems: {
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingLeft: 10,
+    borderBottomColor:'#496595',
+  }
 });

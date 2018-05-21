@@ -16,17 +16,30 @@ const HomeStack = createStackNavigator({
 
 HomeStack.navigationOptions = {
   tabBarLabel: 'Home',
-  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? `ios-home${focused ? '' : '-outline'}`
+          : 'ios-home'
       }
     />
   ),
+  tabBarOptions: {
+    inactiveTintColor: '#496595',
+    activeTintColor: '#496595',
+    borderTopWidth: 5,
+    borderColor: 'red',
+      labelStyle: {
+        fontSize: 12,
+      },
+      style: {
+        backgroundColor: '#ffb6c1',    
+      },
+  },
+
+
 };
 
 const CategoryStack = createStackNavigator({
@@ -36,11 +49,20 @@ const CategoryStack = createStackNavigator({
 
 CategoryStack.navigationOptions = {
   tabBarLabel: 'Category',
-  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
+  tabBarOptions: {
+    inactiveTintColor: '#496595',
+    activeTintColor: '#496595',
+      labelStyle: {
+        fontSize: 12,
+      },
+      style: {
+        backgroundColor: '#ffb6c1',
+      },
+  },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
+      name={Platform.OS === 'ios' ? `ios-list-box${focused ? '' : '-outline'}` : 'ios-list-box'}
     />
   ),
 };
@@ -51,11 +73,20 @@ const CalendarStack = createStackNavigator({
 
 CalendarStack.navigationOptions = {
   tabBarLabel: 'Calendar',
-  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
+  tabBarOptions: {
+    inactiveTintColor: '#496595',
+    activeTintColor: '#496595',
+      labelStyle: {
+        fontSize: 12,
+      },
+      style: {
+        backgroundColor: '#ffb6c1',
+      },
+  },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
+      name={Platform.OS === 'ios' ? `ios-calendar${focused ? '' : '-outline'}` : 'ios-calendar'}
     />
   ),
 };
@@ -67,11 +98,20 @@ const ProfileStack = createStackNavigator({
 
 ProfileStack.navigationOptions = {
   tabBarLabel: 'Profile',
-  tabBarOptions: { style: { backgroundColor: '#ffb6c1' } },
+  tabBarOptions: {
+    inactiveTintColor: '#496595',
+    activeTintColor: '#496595',
+      labelStyle: {
+        fontSize: 12,
+      },
+      style: {
+        backgroundColor: '#ffb6c1',
+      },
+  },
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
+      name={Platform.OS === 'ios' ? `ios-contact${focused ? '' : '-outline'}` : 'ios-contact'}
     />
   ),
 };
