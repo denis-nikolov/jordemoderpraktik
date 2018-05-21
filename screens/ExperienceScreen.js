@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, FlatList, Button } from 'react-native';
+import { Icon, ScrollView, StyleSheet, FlatList, Button } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { ListItem, CheckBox } from 'react-native-elements';
 import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
@@ -26,39 +26,44 @@ const items = [
 
 export default class CategoryScreen extends React.Component {
 
-    static navigationOptions = {
-      title: 'Experiences',
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params || {};
+    return {
+      headerTitle: 'Experience',
       headerStyle: {
         backgroundColor: '#add8e6',
         borderBottomWidth: 0,
-       },
-      headerTitleStyle: { color: '#545454' },
-      // headerRight: (
-      //
-      // ),
+      },
+      headerTitleStyle: { color: '#4B5D63' },
+      headerRight: (
+        <TouchableOpacity style={styles.addExperienceIcon} onPress={params.handleAddExperience}>
+          <TabBarIcon name='md-add'/>
+        </TouchableOpacity>
+      ),
     };
+  };
 
-state = {
-  checked: [],
-  visibleModal: null,
-  input: '',
-}
-
-componentDidMount() {
+  componentWillMount() {
     this.setState({
       input: this.state.input,
+      visibleModal: false,
+    });
+    this.props.navigation.setParams({
+      handleAddExperience: this._addExperience
     });
   }
 
-_renderButton = (onPress) => (
-  <TouchableOpacity onPress={onPress} style={styles.addExperienceIcon}>
-    <TabBarIcon
-      name='md-add'
-    />
-  </TouchableOpacity>
-);
+  state = {
+    checked: [],
+    visibleModal: false,
+    input: '',
+  }
 
-_renderModalContent = () => (
+  _addExperience = () => {
+    this.setState({ visibleModal: true });
+  }
+
+  _renderModalContent = () => (
     <View style={styles.modalContent}>
       <View style={styles.form}>
            <Text style={styles.labelInModal}>Name:</Text>
@@ -69,86 +74,86 @@ _renderModalContent = () => (
             selectTextOnFocus={true}
           />
       </View>
-      <Button onPress={() => this.setState({ visibleModal: null })}
-              title='Add Experience'
-              style={styles.button}/>
+      <View style={{flex:1, flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Button onPress={() => this.setState({ visibleModal: false })}
+                title='Add Experience'
+                style={styles.button}/>
+        <Button onPress={() => this.setState({ visibleModal: false })}
+                title='Add Experience'
+                style={styles.button}/>
+      </View>
     </View>
   );
 
+  _keyExtractor = (item, index) => item.id;
 
+  checkItem = item => {
+      const { checked } = this.state;
 
-_keyExtractor = (item, index) => item.id;
-
-checkItem = item => {
-    const { checked } = this.state;
-
-    if (!checked.includes(item)) {
-      this.setState({ checked: [...checked, item] });
-    } else {
-      this.setState({ checked: checked.filter(a => a !== item) });
-    }
-  };
+      if (!checked.includes(item)) {
+        this.setState({ checked: [...checked, item] });
+      } else {
+        this.setState({ checked: checked.filter(a => a !== item) });
+      }
+    };
 
   render() {
     return (
-
       <ImageBackground
         source={require('../assets/images/background_gradient.jpg')}
         style={{width: '100%', height: '103%'}}
       >
 
-      <SearchBar //ref={search => this.search = search}
-        containerStyle={styles.searchBar}
-        inputStyle={styles.inputStyle}
-        //platform='ios'
-        //onChangeText={}
-        //onClear={}
-        //onCancel={}
-        cancelIcon={true}
-        cancelButtonTitle='Cancel'
-        round
-        placeholder='Search'
-        />
+        <SearchBar //ref={search => this.search = search}
+          containerStyle={styles.searchBar}
+          inputStyle={styles.inputStyle}
+          //platform='ios'
+          //onChangeText={}
+          //onClear={}
+          //onCancel={}
+          cancelIcon={true}
+          cancelButtonTitle='Cancel'
+          round
+          placeholder='Search'
+          />
 
         <View style={styles.container1}>
-          {this._renderButton(() => this.setState({ visibleModal: 4 }))}
           <Modal
-          isVisible={this.state.visibleModal === 4}
-          //backdropColor={'red'}
-          //backdropOpacity={1}
-          animationIn={'zoomInDown'}
-          animationOut={'zoomOutUp'}
-          animationInTiming={1000}
-          animationOutTiming={1000}
-          backdropTransitionInTiming={1000}
-          backdropTransitionOutTiming={1000}
-        >
-          {this._renderModalContent()}
-        </Modal>
-      </View>
+            isVisible={this.state.visibleModal}
+            //backdropColor={'red'}
+            //backdropOpacity={1}
+            animationIn={'zoomInDown'}
+            animationOut={'zoomOutUp'}
+            animationInTiming={1000}
+            animationOutTiming={1000}
+            backdropTransitionInTiming={1000}
+            backdropTransitionOutTiming={1000}
+          >
+            {this._renderModalContent()}
+          </Modal>
+        </View>
 
-      <ScrollView>
-          <FlatList style={styles.container}
-            data={items}
-            extraData={this.state}
-            keyExtractor={this._keyExtractor}
-            renderItem={({ item }) => (
-              <CheckBox
-                title={item}
-                onPress={() => this.checkItem(item)}
-                checked={this.state.checked.includes(item)}
-                checkedColor='#496595'
-                containerStyle={styles.checkbox}
-                textStyle={styles.textCheckbox}
-                uncheckedColor='#383838'
-              />
-            )}
+        <ScrollView>
+            <FlatList style={styles.container}
+              data={items}
+              extraData={this.state}
+              keyExtractor={this._keyExtractor}
+              renderItem={({ item }) => (
+                <CheckBox
+                  title={item}
+                  onPress={() => this.checkItem(item)}
+                  checked={this.state.checked.includes(item)}
+                  checkedColor='#496595'
+                  containerStyle={styles.checkbox}
+                  textStyle={styles.textCheckbox}
+                  uncheckedColor='#383838'
+                />
+              )}
 
-          />
-      </ScrollView>
+            />
+        </ScrollView>
 
       </ImageBackground>
-
     );
   }
 }
@@ -186,42 +191,40 @@ const styles = StyleSheet.create({
 
 
 
-    button: {
-      backgroundColor: 'lightblue',
-      padding: 12,
-      margin: 16,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 4,
-      borderColor: 'rgba(0, 0, 0, 0.1)',
-    },
-    modalContent: {
-      backgroundColor: 'white',
-      padding: 22,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 4,
-      borderColor: 'rgba(0, 0, 0, 0.1)',
-    },
+  button: {
+    backgroundColor: 'lightblue',
+    padding: 12,
+    margin: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+  },
 
-    labelInModal: {
-      marginLeft: 20,
-    },
+  labelInModal: {
+    marginLeft: 20,
+  },
 
-    form: {
-      marginBottom: 10,
-      borderBottomColor: '#545454',
+  form: {
+    marginBottom: 10,
+    borderBottomColor: '#545454',
 
-    },
-    input: {
-      color: '#545454',
-      width: 300,
-    },
+  },
+  input: {
+    color: '#545454',
+    width: 300,
+  },
 
-    addExperienceIcon: {
-      width: 20,
-      marginLeft: 10,
-    },
-
-
+  addExperienceIcon: {
+    width: 20,
+    marginRight: 15,
+  },
 });
