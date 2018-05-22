@@ -1,16 +1,13 @@
 import React from 'react';
-import { Icon, ScrollView, StyleSheet, FlatList, Button } from 'react-native';
+import { Icon, ScrollView, StyleSheet, FlatList, Button,
+        ImageBackground, Text, TouchableOpacity, View  } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-import { ListItem, CheckBox } from 'react-native-elements';
-import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { SearchBar, FormInput, FormLabel, ListItem, CheckBox } from 'react-native-elements';
 import Modal from 'react-native-modal';// 2.4.0
-import { FormInput, FormLabel } from 'react-native-elements';
-import "@expo/vector-icons";
 import TabBarIcon from '../components/TabBarIcon';
 import { Ionicons } from '@expo/vector-icons';
 
-const items = [
+var items = [
   'Identificere ressourcer og belastninger hos kvinden/familien, herunder kvinden/partnerens' ,
   'Inddrage viden om kvinden/familiens mål og behov i omsorgen' ,
   'Optage anamnese' ,
@@ -44,10 +41,10 @@ export default class CategoryScreen extends React.Component {
   };
 
   componentWillMount() {
-    this.setState({
-      input: this.state.input,
-      visibleModal: false,
-    });
+    // this.setState({
+    //   input: this.state.input,
+    //   visibleModal: false,
+    // });
     this.props.navigation.setParams({
       handleAddExperience: this._addExperience
     });
@@ -74,16 +71,19 @@ export default class CategoryScreen extends React.Component {
             selectTextOnFocus={true}
           />
       </View>
-      <View style={{flex:1, flexDirection: 'row', justifyContent: 'space-between'}}>
-        <Button onPress={() => this.setState({ visibleModal: false })}
+      <Button onPress={() => this.createNewExperience()}
                 title='Add Experience'
                 style={styles.button}/>
-        <Button onPress={() => this.setState({ visibleModal: false })}
-                title='Add Experience'
-                style={styles.button}/>
-      </View>
     </View>
   );
+
+  createNewExperience = () => {
+    items.push(this.state.input);
+    this.setState({
+      visibleModal: false,
+      input: ''
+     });
+  }
 
   _keyExtractor = (item, index) => item.id;
 
@@ -128,6 +128,7 @@ export default class CategoryScreen extends React.Component {
             animationOutTiming={1000}
             backdropTransitionInTiming={1000}
             backdropTransitionOutTiming={1000}
+            onBackdropPress={() => this.setState({ visibleModal: false })}
           >
             {this._renderModalContent()}
           </Modal>
@@ -149,8 +150,8 @@ export default class CategoryScreen extends React.Component {
                   uncheckedColor='#383838'
                 />
               )}
-
             />
+            <Button title='Submit' onPress={() => console.log(this.state.checked);}/>
         </ScrollView>
 
       </ImageBackground>
@@ -162,7 +163,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   checkbox: {
     backgroundColor: 'transparent',
     borderColor: '#496595',
@@ -172,25 +172,19 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
     paddingBottom: 25,
   },
-
   textCheckbox: {
     color: '#383838',
   },
-
   searchBar: {
     backgroundColor: 'transparent',
     borderTopWidth: 0,
     borderBottomWidth: 0,
     marginTop: 10,
   },
-
   inputStyle: {
     backgroundColor: '#606060',
     color: '#DCDCDC',
   },
-
-
-
   button: {
     backgroundColor: 'lightblue',
     padding: 12,
@@ -206,23 +200,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: 'rgba(0, 0, 0, 0.1)'
   },
-
   labelInModal: {
     marginLeft: 20,
   },
-
   form: {
-    marginBottom: 10,
+    marginBottom: 20,
     borderBottomColor: '#545454',
-
   },
   input: {
     color: '#545454',
     width: 300,
   },
-
   addExperienceIcon: {
     width: 20,
     marginRight: 15,
