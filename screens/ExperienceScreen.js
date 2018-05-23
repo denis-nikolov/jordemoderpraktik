@@ -6,20 +6,25 @@ import { SearchBar, FormInput, FormLabel, ListItem, CheckBox } from 'react-nativ
 import Modal from 'react-native-modal';// 2.4.0
 import TabBarIcon from '../components/TabBarIcon';
 import { Ionicons } from '@expo/vector-icons';
+import firebase from '@firebase/app';
+import '@firebase/firestore';
 
-var items = [
-  'Identificere ressourcer og belastninger hos kvinden/familien, herunder kvinden/partnerens' ,
-  'Inddrage viden om kvinden/familiens mål og behov i omsorgen' ,
-  'Optage anamnese' ,
-  'Inddrage partneren' ,
-  'Observere og understøtte kvindens/partnerens begyndende tilknytning til barnet' ,
-  'Inddrage viden om kvinden/familiens mål og behov i omsorgen' ,
-  'Optage anamnese..' ,
-  'Identificere ressourcer og belastninger hos kvinden/familien, herunder kvinden/partnerens handlekompetence, OAS og netværk',
-  'Inddrage viden om kvinden/familiens mål og behov i omsorgen' ,
-  'Identificere ressourcer og belastninger hos kvinden/familien, herunder kvinden/partnerens handlekompetence' ,
-];
+const list = [
+  {
+    key: 'Svangreomsorg i jordemoderkonsultation',
+  },
+  {
+    key: 'Svangreomsorg i jordemoderkonsultation',
+  },
+  {
+    key: 'Svangreomsorg i jordemoderkonsultation',
+  },
+]
 
+require('@firebase/firestore');
+const firestore = firebase.firestore();
+const settings = { timestampsInSnapshots: true };
+firestore.settings(settings);
 
 export default class CategoryScreen extends React.Component {
 
@@ -41,19 +46,23 @@ export default class CategoryScreen extends React.Component {
   };
 
   componentWillMount() {
-    // this.setState({
-    //   input: this.state.input,
-    //   visibleModal: false,
-    // });
     this.props.navigation.setParams({
       handleAddExperience: this._addExperience
     });
+  }
+
+  componentWillReceiveProps() {
+    var exps = this.props.navigation.getParam('experiences');
+    this.setState({ experiences: exps });
+    console.log(this.state.experiences);
+    //this.setState({ experiences: this.props.navigation.state.experiences })
   }
 
   state = {
     checked: [],
     visibleModal: false,
     input: '',
+    experiences: []
   }
 
   _addExperience = () => {
@@ -88,14 +97,22 @@ export default class CategoryScreen extends React.Component {
   _keyExtractor = (item, index) => item.id;
 
   checkItem = item => {
-      const { checked } = this.state;
+    const { checked } = this.state;
 
-      if (!checked.includes(item)) {
-        this.setState({ checked: [...checked, item] });
-      } else {
-        this.setState({ checked: checked.filter(a => a !== item) });
-      }
-    };
+    if (!checked.includes(item)) {
+      this.setState({ checked: [...checked, item] });
+    } else {
+      this.setState({ checked: checked.filter(a => a !== item) });
+    }
+  }
+
+  submitExperiences = () => {
+    console.log(JSON.stringify(this.state.checked));
+    firebase.firestore().collection('users').add({
+      _id: '+4542469654',
+      complete: this.state.checked,
+    })
+  }
 
   render() {
     return (
@@ -136,9 +153,8 @@ export default class CategoryScreen extends React.Component {
 
         <ScrollView>
             <FlatList style={styles.container}
-              data={items}
+              data={this.state.experiences}
               extraData={this.state}
-              keyExtractor={this._keyExtractor}
               renderItem={({ item }) => (
                 <CheckBox
                   title={item}
@@ -150,8 +166,9 @@ export default class CategoryScreen extends React.Component {
                   uncheckedColor='#383838'
                 />
               )}
+              keyExtractor={item => item}
             />
-            <Button title='Submit' onPress={() => console.log(this.state.checked);}/>
+            <Button title='Submit' onPress={() => this.submitExperiences()}/>
         </ScrollView>
 
       </ImageBackground>
