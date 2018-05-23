@@ -1,15 +1,26 @@
 import React from 'react';
-import { TouchableWithoutFeedback, Button, Text, View,
-          ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import { TouchableWithoutFeedback, Text, View,
+          ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity, KeyboardAvoidingView  } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-import { ListItem, FormInput, FormLabel } from 'react-native-elements';
+import { ListItem, FormInput, FormLabel, Button } from 'react-native-elements';
 import { LinearGradient } from 'expo';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { StackNavigator } from 'react-navigation';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import Modal from 'react-native-modal';// 2.4.0
+import Modal from 'react-native-modal';
 import TabBarIcon from '../components/TabBarIcon';
 import { Ionicons } from '@expo/vector-icons';
+
+const list = [
+  {
+    title: 'Start date and time',
+    icon: 'av-timer',
+  },
+  {
+    title: 'End date and time',
+    icon: 'av-timer',
+  },
+]
 
 export default class CalendarScreen extends React.Component {
   constructor(props) {
@@ -47,7 +58,6 @@ export default class CalendarScreen extends React.Component {
         <TouchableOpacity style={styles.addExperienceIcon} onPress={params.handleAddExperience}>
           <TabBarIcon name='md-add'/>
         </TouchableOpacity>
-        //<Button onPress={params.handleCreateEvent} title="Add"/>
       ),
     };
   };
@@ -69,18 +79,40 @@ export default class CalendarScreen extends React.Component {
   _renderModalContent = () => (
     <View style={styles.modalContent}>
       <View style={styles.form}>
-         <Text style={styles.labelInModal}>Name:</Text>
+         <Text style={styles.labelInModal}>New Event</Text>
          <FormInput
+          containerStyle={{borderBottomColor: '#7e7e7e'}}
           inputStyle={styles.input}
           onChangeText={input => this.setState({ input })}
           value={this.state.input}
           selectTextOnFocus={true}
-        />
+          placeholder="Name"/>
+      </View>
+      <View style={styles.modalListItem}>
+        {
+          list.map((item, i) => (
+            <ListItem
+              onPress={() => this.setState({isDateTimePickerVisible: true})}
+              containerStyle={styles.modalListItem1}
+              chevronColor='#496595'
+              key={i}
+              title={item.title}
+              leftIcon={{ name: item.icon, color: '#496595', }}
+            />
+          ))
+        }
       </View>
       <View>
-        <Button onPress={() => this.setState({ visibleModal: false })}
-                title='Add Experience'
-                style={styles.button}/>
+        <Button
+          onPress={() => this.setState({ visibleModal: false })}
+          title='Add to Calendar'
+          buttonStyle={{
+          backgroundColor: "#496595",
+          width: 335,
+          height: 45,
+          borderColor: "transparent",
+          borderWidth: 0,
+          borderRadius: 5, }}/>
       </View>
     </View>
   );
@@ -184,23 +216,22 @@ export default class CalendarScreen extends React.Component {
     return (
       <ImageBackground
         source={require('../assets/images/background_gradient.jpg')}
-        style={{width: '100%', height: '103%'}}
-      >
+        style={{width: '100%', height: '103%'}}>
 
-      <View style={styles.container1}>
-        <Modal
-          isVisible={this.state.visibleModal}
-          animationIn={'zoomInDown'}
-          animationOut={'zoomOutUp'}
-          animationInTiming={1000}
-          animationOutTiming={1000}
-          backdropTransitionInTiming={1000}
-          backdropTransitionOutTiming={1000}
-          onBackdropPress={() => this.setState({ visibleModal: false })}
-        >
-          {this._renderModalContent()}
-        </Modal>
-      </View>
+        <View style={styles.container1}>
+          <Modal
+            style={{ justifyContent: 'flex-start', marginTop: 120, }}
+            isVisible={this.state.visibleModal}
+            animationIn={'zoomInDown'}
+            animationOut={'zoomOutUp'}
+            animationInTiming={1000}
+            animationOutTiming={1000}
+            backdropTransitionInTiming={1000}
+            backdropTransitionOutTiming={1000}
+            onBackdropPress={() => this.setState({ visibleModal: false })}>
+            {this._renderModalContent()}
+          </Modal>
+        </View>
 
         <Agenda
           style={{
@@ -229,9 +260,7 @@ export default class CalendarScreen extends React.Component {
           />
         </TouchableWithoutFeedback>
 
-
       </ImageBackground>
-
     );
   }
 }
@@ -259,17 +288,8 @@ const styles = StyleSheet.create({
    flex:1,
    paddingTop: 30
  },
- button: {
-   backgroundColor: 'lightblue',
-   padding: 12,
-   margin: 16,
-   justifyContent: 'center',
-   alignItems: 'center',
-   borderRadius: 4,
-   borderColor: 'rgba(0, 0, 0, 0.1)',
- },
  modalContent: {
-   backgroundColor: 'white',
+   backgroundColor: '#d3b3b8',
    padding: 22,
    justifyContent: 'center',
    alignItems: 'center',
@@ -277,11 +297,15 @@ const styles = StyleSheet.create({
    borderColor: 'rgba(0, 0, 0, 0.1)',
  },
  labelInModal: {
-   marginLeft: 20,
+   fontSize: 18,
+   color: '#3f3f3f',
+   fontWeight: 'bold',
+   fontStyle: 'italic',
  },
  form: {
-   marginBottom: 10,
+   marginBottom: 20,
    borderBottomColor: '#545454',
+   alignItems: 'center',
  },
  input: {
    color: '#545454',
@@ -290,5 +314,12 @@ const styles = StyleSheet.create({
  addExperienceIcon: {
    width: 20,
    marginRight: 15,
+ },
+ modalListItem: {
+   width: 300,
+   marginBottom: 20,
+ },
+ modalListItem1: {
+   borderBottomWidth: 0,
  },
 });
