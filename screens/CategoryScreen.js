@@ -5,6 +5,22 @@ import { ListItem } from 'react-native-elements';
 import { ImageBackground, Image } from 'react-native';
 import { LinearGradient } from 'expo';
 import { StackNavigator } from 'react-navigation';
+import firebase from '@firebase/app';
+import '@firebase/firestore';
+
+const config = {
+  apiKey: "AIzaSyAZzqPWgp3AfMfnYOS9_TPofwfBT716Qrk",
+  authDomain: "drink-and-drive.firebaseapp.com",
+  databaseURL: "https://drink-and-drive.firebaseio.com",
+  projectId: "drink-and-drive",
+  storageBucket: "drink-and-drive.appspot.com",
+  messagingSenderId: "943601859777"
+};
+firebase.initializeApp(config);
+require('@firebase/firestore');
+const firestore = firebase.firestore();
+const settings = { timestampsInSnapshots: true };
+firestore.settings(settings);
 
 const list = [
   {
@@ -29,9 +45,49 @@ export default class CategoryScreen extends React.Component {
     headerTitleStyle: { color: '#545454' },
   };
 
-  goToExperienceScreen() {
-        this.props.navigation.navigate('Experience');
+  state = {
+    categories: [],
+    experiences: []
+  }
+
+  componentWillMount() {
+    this.dbGetCategories();
+  }
+
+  dbGetCategories() {
+    var db = firebase.firestore();
+    db.collection('experiences')
+     .get()
+     .then(snapshot => {
+       snapshot.forEach(doc => {
+         if (doc && doc.exists) {
+           var obj = doc.data();
+           var key = Object.keys(obj)[0];
+           var exps = obj[key];
+           var category = { title: Object.keys(obj)[0] };
+           var newStateArray = this.state.categories.slice();
+           newStateArray.push(category);
+           this.setState({ experiences: exps, categories: newStateArray });
+         }
+        });
+    });
+  }
+
+  async chooseDataSource() {
+    try {
+      const value = await AsyncStorage.getItem('semester');
+      if (value !== null){
+        console.log(value);
+      }
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  goToExperienceScreen() {
+    var exps = this.state.experiences;
+    this.props.navigation.navigate('Experience', { experiences: exps });
+  }
 
   render() {
     const { navigate } = this.props.navigation;
@@ -45,7 +101,7 @@ export default class CategoryScreen extends React.Component {
 
             <ScrollView>
                 {
-                  list.map((item, i) => (
+                  this.state.categories.map((item, i) => (
                     <ListItem
                       containerStyle={styles.listItems}
                       onPress={() => this.goToExperienceScreen()}
@@ -65,7 +121,6 @@ export default class CategoryScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-
   listItems: {
     paddingTop: 20,
     paddingBottom: 20,

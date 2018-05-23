@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
+    "@firebase/firestore": "^0.5.3",
     "axios": "^0.18.0",
     "expo": "^27.0.1",
     "firebase": "^5.0.2",

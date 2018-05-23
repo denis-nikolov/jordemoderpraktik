@@ -115,6 +115,7 @@ export default class example extends Component {
          });
 
         await AsyncStorage.setItem('userToken', JSON.stringify(data));
+        await AsyncStorage.setItem('userPhone', this.state.phone);
 
         this.refs.form.refs.textInput.blur();
         this.setState({ spinner: false });
