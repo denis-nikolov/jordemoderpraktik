@@ -116,7 +116,7 @@ export default class HomeScreen extends React.Component {
         <ScrollView>
 
           <View style={styles.container}>
-
+                <Text style={styles.label}>Hours Spent {this.state.hours} / 300</Text>
                 <ProgressBarAnimated
                   backgroundColor='#4B5D63'
                   borderColor='#85a1aa'
@@ -124,7 +124,6 @@ export default class HomeScreen extends React.Component {
                   value={this.state.progress}
                   backgroundColorOnComplete='#148cF0' //"#6CC644"
                 />
-                <Text style={styles.label}>{this.state.hours}/300 hours</Text>
                 <View style={styles.buttonContainer}>
                   <View style={styles.buttonInner}>
                     <Button
@@ -133,7 +132,7 @@ export default class HomeScreen extends React.Component {
                     />
                   </View>
                 </View>
-
+                <Text style={styles.label}>Babies Delivered {this.state.babies} / 40</Text>
                 <ProgressBarAnimated
                   backgroundColor='#4B5D63'
                   borderColor='#85a1aa'
@@ -144,7 +143,6 @@ export default class HomeScreen extends React.Component {
                     Alert.alert('Hey!', 'You have delivered 40 babies!');
                   }}
                 />
-                <Text style={styles.label}>{this.state.babies}/40 delivered babies</Text>
                 <View style={styles.buttonContainer}>
                   <View style={styles.buttonInner}>
                     <Button
@@ -173,9 +171,10 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#4B5D63',
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: '500',
     marginBottom: 10,
+    font-family: 'lato-regular',
   },
   modalContent: {
     alignItems: 'center',
