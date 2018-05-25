@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon, ScrollView, StyleSheet, FlatList, Button,
+import { Icon, ScrollView, StyleSheet, FlatList,
         ImageBackground, Text, TouchableOpacity, View  } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-import { SearchBar, FormInput, FormLabel, ListItem, CheckBox } from 'react-native-elements';
+import { SearchBar, FormInput, FormLabel, ListItem, CheckBox, Button } from 'react-native-elements';
 import Modal from 'react-native-modal';// 2.4.0
 import TabBarIcon from '../components/TabBarIcon';
 import { Ionicons } from '@expo/vector-icons';
@@ -72,17 +72,26 @@ export default class CategoryScreen extends React.Component {
   _renderModalContent = () => (
     <View style={styles.modalContent}>
       <View style={styles.form}>
-           <Text style={styles.labelInModal}>Name:</Text>
+           <Text style={styles.labelInModal}>Add new Experience</Text>
            <FormInput
+            containerStyle={{borderBottomColor: '#7e7e7e'}}
             inputStyle={styles.input}
             onChangeText={input => this.setState({ input })}
             value={this.state.input}
             selectTextOnFocus={true}
+            placeholder="Name"
           />
       </View>
-      <Button onPress={() => this.createNewExperience()}
-                title='Add Experience'
-                style={styles.button}/>
+      <Button //onPress={() => this.createNewExperience()}
+              onPress={() => this.setState({ visibleModal: false })}
+              title='Submit'
+              buttonStyle={{
+              backgroundColor: "#496595",
+              width: 335,
+              height: 45,
+              borderColor: "transparent",
+              borderWidth: 0,
+              borderRadius: 5, }}/>
     </View>
   );
 
@@ -168,7 +177,17 @@ export default class CategoryScreen extends React.Component {
               )}
               keyExtractor={item => item}
             />
-            <Button title='Submit' onPress={() => this.submitExperiences()}/>
+            <Button
+                title='Submit'
+                onPress={() => this.submitExperiences()}
+                buttonStyle={{
+                backgroundColor: '#496595',
+                height: 45,
+                borderColor: "transparent",
+                marginBottom: 20,
+                marginTop: 10,
+                borderWidth: 0,
+                borderRadius: 30, }}/>
         </ScrollView>
 
       </ImageBackground>
@@ -202,29 +221,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#606060',
     color: '#DCDCDC',
   },
-  button: {
-    backgroundColor: 'lightblue',
-    padding: 12,
-    margin: 16,
+  modalContent: {
+    backgroundColor: '#d3b3b8',
+    padding: 22,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 4,
-    borderColor: 'rgba(0, 0, 0, 0.1)'
-  },
   labelInModal: {
-    marginLeft: 20,
+    fontSize: 18,
+    color: '#3f3f3f',
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+    marginBottom: 20,
   },
   form: {
     marginBottom: 20,
     borderBottomColor: '#545454',
+    alignItems: 'center',
   },
   input: {
     color: '#545454',
@@ -234,4 +249,11 @@ const styles = StyleSheet.create({
     width: 20,
     marginRight: 15,
   },
-});
+  modalListItem: {
+    width: 300,
+    marginBottom: 20,
+  },
+  modalListItem1: {
+    borderBottomWidth: 0,
+  },
+ });
