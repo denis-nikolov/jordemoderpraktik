@@ -22,18 +22,6 @@ const firestore = firebase.firestore();
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 
-const list = [
-  {
-    title: 'Svangreomsorg i jordemoderkonsultation',
-  },
-  {
-    title: 'Svangreomsorg i jordemoderkonsultation',
-  },
-  {
-    title: 'Svangreomsorg i jordemoderkonsultation',
-  },
-]
-
 export default class CategoryScreen extends React.Component {
   static navigationOptions = {
     title: 'Categories',
@@ -46,12 +34,36 @@ export default class CategoryScreen extends React.Component {
   };
 
   state = {
+    fsDocument: '',
     categories: [],
     experiences: []
   }
 
   componentWillMount() {
-    this.dbGetCategories();
+    this.dbGetDocument();
+  }
+
+  dbGetDocument() {
+    var db = firebase.firestore();
+    var expRef = db.collection('experiences').doc('sem02');
+    var getDoc = expRef.get()
+    .then(doc => {
+      if (!doc.exists) {
+        console.log('No such document!');
+      } else {
+        var obj = doc.data();
+        var newStateArray = Object.keys(obj);
+        console.log(newStateArray);
+        this.setState({ fsDocument: obj, categories: newStateArray });
+      }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
+  }
+
+  getCategories() {
+
   }
 
   dbGetCategories() {
@@ -71,17 +83,6 @@ export default class CategoryScreen extends React.Component {
          }
         });
     });
-  }
-
-  async chooseDataSource() {
-    try {
-      const value = await AsyncStorage.getItem('semester');
-      if (value !== null){
-        console.log(value);
-      }
-    } catch (error) {
-      console.log(error);
-    }
   }
 
   goToExperienceScreen() {
@@ -106,7 +107,7 @@ export default class CategoryScreen extends React.Component {
                       containerStyle={styles.listItems}
                       onPress={() => this.goToExperienceScreen()}
                       key={i}
-                      title={item.title}
+                      title={item}
                       chevronColor='#496595'
                       rightIcon={{name: 'play-arrow'}}
                     />
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
   listItems: {
     paddingTop: 20,
     paddingBottom: 20,
-    paddingLeft: 10,
+    paddingLeft: 0,
     borderBottomColor:'#496595',
   }
 });

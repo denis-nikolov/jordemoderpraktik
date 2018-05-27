@@ -113,6 +113,15 @@ export default class CalendarScreen extends React.Component {
           borderColor: "transparent",
           borderWidth: 0,
           borderRadius: 5, }}/>
+
+          <DateTimePicker
+            date={new Date()}
+            isVisible={this.state.isDateTimePickerVisible}
+            onConfirm={() => console.log('confirm')}
+            onCancel={() => console.log('canceled')}
+            mode={'datetime'}
+            titleIOS={'this.state.dateTimePickerTitle'}
+          />
       </View>
     </View>
   );
