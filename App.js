@@ -43,6 +43,12 @@ export default class App extends React.Component {
       Font.loadAsync({
         'lato': require('./assets/fonts/Lato-Regular.ttf'),
       }),
+      Font.loadAsync({
+        'century-gothic': require('./assets/fonts/CenturyGothicRegular.ttf'),
+      }),
+      Font.loadAsync({
+        'gothic-bold': require('./assets/fonts/CenturyGothicBold.ttf'),
+      }),
     ]);
   };
 

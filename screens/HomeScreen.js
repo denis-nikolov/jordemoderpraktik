@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
-  Alert, Button,
+  Alert,
   ImageBackground,
   Picker,
   AsyncStorage
@@ -17,7 +17,7 @@ import { MonoText } from '../components/StyledText';
 import * as Progress from 'react-native-progress';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Modal from 'react-native-modal';
-import { FormInput, FormLabel } from 'react-native-elements';
+import { FormInput, FormLabel, Button } from 'react-native-elements';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -116,22 +116,17 @@ export default class HomeScreen extends React.Component {
         <ScrollView>
 
           <View style={styles.container}>
+              <View style={styles.firstBarContainer}>
                 <Text style={styles.label}>Hours Spent {this.state.hours} / 300</Text>
                 <ProgressBarAnimated
                   backgroundColor='#4B5D63'
                   borderColor='#85a1aa'
                   width={barWidth}
                   value={this.state.progress}
-                  backgroundColorOnComplete='#148cF0' //"#6CC644"
+                  backgroundColorOnComplete='#148cF0'
                 />
-                <View style={styles.buttonContainer}>
-                  <View style={styles.buttonInner}>
-                    <Button
-                      title="Log progress"
-                      onPress={this.onPressButtonHours.bind(this, 'hours')}
-                    />
-                  </View>
-                </View>
+              </View>
+              <View style={styles.secondBarContainer}>
                 <Text style={styles.label}>Babies Delivered {this.state.babies} / 40</Text>
                 <ProgressBarAnimated
                   backgroundColor='#4B5D63'
@@ -143,15 +138,48 @@ export default class HomeScreen extends React.Component {
                     Alert.alert('Hey!', 'You have delivered 40 babies!');
                   }}
                 />
-                <View style={styles.buttonContainer}>
-                  <View style={styles.buttonInner}>
-                    <Button
-                      title="Log progress"
-                      onPress={this.onPressButtonBabies.bind(this, 'babies')}
-                    />
-                  </View>
+              </View>
+              <View style={styles.buttonsContainer}>
+                <View>
+                  <Button
+                    buttonStyle={{
+                      backgroundColor: 'transparent',
+                      width: 130,
+                      borderColor: "#fff",
+                      borderWidth: 1,
+                      borderRadius: 5,
+                    }}
+                    title="Start Shift"
+                    color='#4B5D63'
+                    fontSize= '20'
+                    fontFamily= 'century-gothic'
+                    underlayColor='#fff'
+                    onPress={this.onPressButtonHours.bind(this, 'hours')}
+                  />
                 </View>
-
+                <View>
+                  <Button
+                    buttonStyle={{
+                      backgroundColor: 'transparent',
+                      width: 130,
+                      borderColor: "#fff",
+                      borderWidth: 1,
+                      borderRadius: 5,
+                    }}
+                    title="End Shift"
+                    color='#4B5D63'
+                    fontSize= '20'
+                    fontFamily= 'century-gothic'
+                    underlayColor='#fff'
+                    disabled={true}
+                    disabledStyle={{ backgroundColor: 'transparent', opacity: 0.6 }}
+                    onPress={this.onPressButtonBabies.bind(this, 'babies')}
+                  />
+                </View>
+              </View>
+              <View>
+                <Text style={styles.label1}>Babies delivered today:</Text>
+              </View>
           </View>
         </ScrollView>
       </ImageBackground>
@@ -166,15 +194,27 @@ const styles = StyleSheet.create({
     marginTop: 50,
     padding: 15,
   },
-  buttonContainer: {
-    marginTop: 10,
+  firstBarContainer: {
+    marginBottom: 30,
+  },
+  buttonsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 40,
+    justifyContent: 'center',
   },
   label: {
     color: '#4B5D63',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '500',
     marginBottom: 10,
-    fontFamily: 'lato'
+    fontFamily: 'century-gothic',
+  },
+  label1: {
+    color: '#4B5D63',
+    fontSize: 20,
+    fontWeight: '500',
+    fontFamily: 'century-gothic',
   },
   modalContent: {
     alignItems: 'center',
