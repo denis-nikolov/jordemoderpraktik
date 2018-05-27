@@ -40,7 +40,9 @@ export default class CategoryScreen extends React.Component {
   }
 
   componentWillMount() {
-    this.dbGetDocument();
+    if (this.state.fsDocument == null) {
+      this.dbGetDocument();
+    }
   }
 
   dbGetDocument() {
@@ -53,7 +55,6 @@ export default class CategoryScreen extends React.Component {
       } else {
         var obj = doc.data();
         var newStateArray = Object.keys(obj);
-        console.log(newStateArray);
         this.setState({ fsDocument: obj, categories: newStateArray });
       }
     })
@@ -62,8 +63,10 @@ export default class CategoryScreen extends React.Component {
     });
   }
 
-  getCategories() {
-
+  getExperiences(category) {
+    var obj = this.state.fsDocument;
+    var exps = obj[category];
+    console.log('Experiences: ' + exps);
   }
 
   dbGetCategories() {
@@ -85,7 +88,9 @@ export default class CategoryScreen extends React.Component {
     });
   }
 
-  goToExperienceScreen() {
+  goToExperienceScreen(item) {
+    console.log('Item: ' + item);
+    
     var exps = this.state.experiences;
     this.props.navigation.navigate('Experience', { experiences: exps });
   }
@@ -105,7 +110,7 @@ export default class CategoryScreen extends React.Component {
                   this.state.categories.map((item, i) => (
                     <ListItem
                       containerStyle={styles.listItems}
-                      onPress={() => this.goToExperienceScreen()}
+                      onPress={(item) => this.goToExperienceScreen(item)}
                       key={i}
                       title={item}
                       chevronColor='#496595'
