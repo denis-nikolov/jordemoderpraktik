@@ -58,6 +58,8 @@ export default class CategoryScreen extends React.Component {
         console.log('No such document!');
       } else {
         var obj = doc.data();
+        let jsonString = JSON.stringify(obj);
+        let json = JSON.parse(jsonString);
         var count = Object.keys(obj);
         var exps = [];
         for (var i in count) {
@@ -65,7 +67,7 @@ export default class CategoryScreen extends React.Component {
           exps.push(obj[key]);
         }
         var newStateArray = Object.keys(obj);
-        this.setState({ fsDocument: obj, categories: newStateArray, experiences: exps });
+        this.setState({ fsDocument: json, categories: newStateArray, experiences: exps });
       }
     })
     .catch(err => {
@@ -74,8 +76,9 @@ export default class CategoryScreen extends React.Component {
   }
 
   goToExperienceScreen(item) {
-    var exps = this.state.experiences[item];
-    this.props.navigation.navigate('Experience', { experiences: exps });
+    let exps = this.state.experiences[item];
+    let jsonObject = this.state.fsDocument;
+    this.props.navigation.navigate('Experience', { experiences: exps, json: jsonObject });
   }
 
   render() {

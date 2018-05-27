@@ -53,16 +53,40 @@ export default class CategoryScreen extends React.Component {
 
   componentWillReceiveProps() {
     var exps = this.props.navigation.getParam('experiences');
-    this.setState({ experiences: exps });
-    console.log(this.state.experiences);
-    //this.setState({ experiences: this.props.navigation.state.experiences })
+    let json = this.props.navigation.getParam('json');
+    this.setState({ experiences: exps, experiencesJson: json });
+    this.createObject(json);
+  }
+
+  createObject(json) {
+    var obj = {
+      sem02: ''
+    }
+    var count = Object.keys(json);
+    console.log("count " + count);
+    for (var i in count) {
+      var key = Object.keys(json)[i];
+      var value = json[key];
+      var objToAssign = {
+        key: value
+      }
+      console.log('Obj to assign: ' + value);
+    }
+  }
+
+  arrayToObject(arr) {
+    var obj = arr.reduce(function(acc, cur, i) {
+      acc[i] = cur;
+      return acc;
+    }, {});
   }
 
   state = {
     checked: [],
     visibleModal: false,
     input: '',
-    experiences: []
+    experiences: [],
+    experiencesJson: null
   }
 
   _addExperience = () => {
@@ -167,7 +191,8 @@ export default class CategoryScreen extends React.Component {
               renderItem={({ item }) => (
                 <CheckBox
                   title={item}
-                  onPress={() => this.checkItem(item)}
+                  onPress={() => console.log('Container pressed!')}
+                  onIconPress={() => this.checkItem(item)}
                   checked={this.state.checked.includes(item)}
                   checkedColor='#496595'
                   containerStyle={styles.checkbox}
@@ -180,7 +205,14 @@ export default class CategoryScreen extends React.Component {
             <Button
                 title='Submit'
                 onPress={() => this.submitExperiences()}
-                buttonStyle={styles.floatingButton}/>
+                buttonStyle={{
+                backgroundColor: '#496595',
+                height: 45,
+                borderColor: "transparent",
+                marginBottom: 30,
+                marginTop: 10,
+                borderWidth: 0,
+                borderRadius: 30, }}/>
         </ScrollView>
 
       </ImageBackground>
@@ -248,15 +280,5 @@ const styles = StyleSheet.create({
   },
   modalListItem1: {
     borderBottomWidth: 0,
-  },
-  floatingButton: {
-    position: 'absolute',
-    backgroundColor: '#496595',
-    height: 45,
-    borderColor: "transparent",
-    marginBottom: 20,
-    marginTop: 10,
-    borderWidth: 0,
-    borderRadius: 30,
   },
  });
