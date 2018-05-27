@@ -34,7 +34,7 @@ export default class CategoryScreen extends React.Component {
   };
 
   state = {
-    fsDocument: '',
+    fsDocument: null,
     categories: [],
     experiences: []
   }
@@ -42,6 +42,10 @@ export default class CategoryScreen extends React.Component {
   componentWillMount() {
     if (this.state.fsDocument == null) {
       this.dbGetDocument();
+    } else {
+      var obj = this.state.fsDocument;
+      var newStateArray = Object.keys(obj);
+      this.setState({ fsDocument: obj, categories: newStateArray });
     }
   }
 
@@ -54,8 +58,14 @@ export default class CategoryScreen extends React.Component {
         console.log('No such document!');
       } else {
         var obj = doc.data();
+        var count = Object.keys(obj);
+        var exps = [];
+        for (var i in count) {
+          var key = Object.keys(obj)[i]
+          exps.push(obj[key]);
+        }
         var newStateArray = Object.keys(obj);
-        this.setState({ fsDocument: obj, categories: newStateArray });
+        this.setState({ fsDocument: obj, categories: newStateArray, experiences: exps });
       }
     })
     .catch(err => {
@@ -63,35 +73,8 @@ export default class CategoryScreen extends React.Component {
     });
   }
 
-  getExperiences(category) {
-    var obj = this.state.fsDocument;
-    var exps = obj[category];
-    console.log('Experiences: ' + exps);
-  }
-
-  dbGetCategories() {
-    var db = firebase.firestore();
-    db.collection('experiences')
-     .get()
-     .then(snapshot => {
-       snapshot.forEach(doc => {
-         if (doc && doc.exists) {
-           var obj = doc.data();
-           var key = Object.keys(obj)[0];
-           var exps = obj[key];
-           var category = { title: Object.keys(obj)[0] };
-           var newStateArray = this.state.categories.slice();
-           newStateArray.push(category);
-           this.setState({ experiences: exps, categories: newStateArray });
-         }
-        });
-    });
-  }
-
   goToExperienceScreen(item) {
-    console.log('Item: ' + item);
-    
-    var exps = this.state.experiences;
+    var exps = this.state.experiences[item];
     this.props.navigation.navigate('Experience', { experiences: exps });
   }
 
@@ -110,7 +93,7 @@ export default class CategoryScreen extends React.Component {
                   this.state.categories.map((item, i) => (
                     <ListItem
                       containerStyle={styles.listItems}
-                      onPress={(item) => this.goToExperienceScreen(item)}
+                      onPress={() => this.goToExperienceScreen(i)}
                       key={i}
                       title={item}
                       chevronColor='#496595'

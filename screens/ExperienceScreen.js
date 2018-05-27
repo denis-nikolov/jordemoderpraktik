@@ -180,14 +180,7 @@ export default class CategoryScreen extends React.Component {
             <Button
                 title='Submit'
                 onPress={() => this.submitExperiences()}
-                buttonStyle={{
-                backgroundColor: '#496595',
-                height: 45,
-                borderColor: "transparent",
-                marginBottom: 20,
-                marginTop: 10,
-                borderWidth: 0,
-                borderRadius: 30, }}/>
+                buttonStyle={styles.floatingButton}/>
         </ScrollView>
 
       </ImageBackground>
@@ -255,5 +248,15 @@ const styles = StyleSheet.create({
   },
   modalListItem1: {
     borderBottomWidth: 0,
+  },
+  floatingButton: {
+    position: 'absolute',
+    backgroundColor: '#496595',
+    height: 45,
+    borderColor: "transparent",
+    marginBottom: 20,
+    marginTop: 10,
+    borderWidth: 0,
+    borderRadius: 30,
   },
  });
