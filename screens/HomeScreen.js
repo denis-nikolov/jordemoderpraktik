@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     marginBottom: 10,
-    font-family: 'lato-regular',
   },
   modalContent: {
     alignItems: 'center',
