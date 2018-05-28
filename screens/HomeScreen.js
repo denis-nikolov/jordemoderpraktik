@@ -17,7 +17,7 @@ import { MonoText } from '../components/StyledText';
 import * as Progress from 'react-native-progress';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Modal from 'react-native-modal';
-import { FormInput, FormLabel, Button } from 'react-native-elements';
+import { FormInput, Button } from 'react-native-elements';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -34,9 +34,8 @@ export default class HomeScreen extends React.Component {
     }
 
   componentDidMount() {
-    //this.setState({ visibleModal: true });
-    //this.props.navigation.setParams({ semester: '2'});
     this.setSemester();
+
   }
 
   setSemester() {
@@ -50,7 +49,8 @@ export default class HomeScreen extends React.Component {
     hours: 50,
     babies: 15,
     visibleModal: false,
-    semester: ''
+    semester: '',
+    input: ''
   }
 
   onPressButtonHours = () => {
@@ -178,8 +178,15 @@ export default class HomeScreen extends React.Component {
                   />
                 </View>
               </View>
-              <View>
+              <View style={{ backgroundColor: 'red'}}>
                 <Text style={styles.label1}>Babies delivered today:</Text>
+                <FormInput
+                 containerStyle={{borderBottomColor: '#7e7e7e'}}
+                 onChangeText={input => this.setState({ input })}
+                 value={this.state.input}
+                 selectTextOnFocus={true}
+                 keyboardType="numeric"
+               />
               </View>
           </View>
         </ScrollView>
@@ -232,9 +239,5 @@ const styles = StyleSheet.create({
   form: {
     marginBottom: 20,
     borderBottomColor: '#545454',
-  },
-  input: {
-    color: '#545454',
-    width: 300,
   },
 });
