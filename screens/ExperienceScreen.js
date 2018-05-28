@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon, ScrollView, StyleSheet, FlatList,
-        ImageBackground, Text, TouchableOpacity, View  } from 'react-native';
+        ImageBackground, Text, TouchableOpacity, View, Alert  } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { SearchBar, FormInput, FormLabel, ListItem, CheckBox, Button } from 'react-native-elements';
 import Modal from 'react-native-modal';// 2.4.0
@@ -9,17 +9,6 @@ import { Ionicons } from '@expo/vector-icons';
 import firebase from '@firebase/app';
 import '@firebase/firestore';
 
-const list = [
-  {
-    key: 'Svangreomsorg i jordemoderkonsultation',
-  },
-  {
-    key: 'Svangreomsorg i jordemoderkonsultation',
-  },
-  {
-    key: 'Svangreomsorg i jordemoderkonsultation',
-  },
-]
 
 require('@firebase/firestore');
 const firestore = firebase.firestore();
@@ -49,36 +38,42 @@ export default class CategoryScreen extends React.Component {
     this.props.navigation.setParams({
       handleAddExperience: this._addExperience
     });
+
+    this.dbGetUserRecord();
   }
 
   componentWillReceiveProps() {
     var exps = this.props.navigation.getParam('experiences');
     let json = this.props.navigation.getParam('json');
     this.setState({ experiences: exps, experiencesJson: json });
-    this.createObject(json);
   }
 
-  createObject(json) {
-    var obj = {
-      sem02: ''
-    }
-    var count = Object.keys(json);
-    console.log("count " + count);
-    for (var i in count) {
-      var key = Object.keys(json)[i];
-      var value = json[key];
-      var objToAssign = {
-        key: value
+  dbGetUserRecord() {
+    var db = firebase.firestore();
+    var expRef = db.collection('users').doc(global.uid);
+    var getDoc = expRef.get()
+    .then(doc => {
+      if (!doc.exists) {
+        console.log('No such document!');
+      } else {
+        var obj = doc.data();
+        this.setState({ userObject: obj })
       }
-      console.log('Obj to assign: ' + value);
-    }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
   }
 
-  arrayToObject(arr) {
-    var obj = arr.reduce(function(acc, cur, i) {
-      acc[i] = cur;
-      return acc;
-    }, {});
+  dbCreateUserRecord() {
+    var obj = this.state.userObject;
+    var db = firebase.firestore();
+    db.collection("users").doc(global.uid).set(obj);
+
+    Alert.alert('Congratulations!', "Successfully submitted.", [{
+      text: 'OK',
+      onPress: () => console.log('asd')
+    }]);
   }
 
   state = {
@@ -86,7 +81,8 @@ export default class CategoryScreen extends React.Component {
     visibleModal: false,
     input: '',
     experiences: [],
-    experiencesJson: null
+    experiencesJson: null,
+    userObject: {}
   }
 
   _addExperience = () => {
@@ -140,11 +136,56 @@ export default class CategoryScreen extends React.Component {
   }
 
   submitExperiences = () => {
-    console.log(JSON.stringify(this.state.checked));
-    firebase.firestore().collection('users').add({
-      _id: '+4542469654',
-      complete: this.state.checked,
-    })
+    var obj = this.state.userObject;
+    var semester = global.semester;
+    var expObj = this.createExperiencesObject();
+
+
+    if (Object.keys(obj).length === 0 && obj.constructor === Object ) {
+      obj[semester] = expObj;
+      this.dbCreateUserRecord();
+    } else {
+      if (obj.hasOwnProperty(semester)) {
+        this.appendExperiencesObject();
+        this.dbCreateUserRecord();
+      } else {
+        obj[semester] = expObj;
+        this.dbCreateUserRecord();
+      }
+    }
+  }
+
+  appendExperiencesObject() {
+    var obj = this.state.userObject;
+    var arr = this.state.checked;
+    var semester = global.semester;
+    var date = new Date();
+    date = date.toISOString().split('T')[0];
+
+    arr.forEach(function(entry) {
+      if (obj[semester].hasOwnProperty(entry)) {
+        var prevVal = JSON.stringify(obj[semester][entry]);
+        prevVal = prevVal.replace(/"/g,"")
+        var append = prevVal + ',' + date;
+        obj[semester][entry] = append;
+      } else {
+        obj[semester][entry] = date;
+      }
+    });
+
+    this.setState({ userObject: obj });
+  }
+
+  createExperiencesObject() {
+    var obj = {};
+    var arr = this.state.checked;
+    const date = new Date();
+
+    arr.forEach(function(entry) {
+      obj[entry] = date.toISOString().split('T')[0];
+    });
+
+    return obj;
   }
 
   render() {

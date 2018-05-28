@@ -39,8 +39,9 @@ export default class HomeScreen extends React.Component {
     this.setSemester();
   }
 
-  setSemester = async () => {
-    await AsyncStorage.setItem('semester', '2');
+  setSemester() {
+    global.semester = "sem02";
+    global.uid = "+4560530103";
   }
 
   state = {
