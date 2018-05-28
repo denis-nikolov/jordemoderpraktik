@@ -50,8 +50,9 @@ export default class CategoryScreen extends React.Component {
   }
 
   dbGetDocument() {
+    var semester = global.semester;
     var db = firebase.firestore();
-    var expRef = db.collection('experiences').doc('sem02');
+    var expRef = db.collection('experiences').doc(semester);
     var getDoc = expRef.get()
     .then(doc => {
       if (!doc.exists) {

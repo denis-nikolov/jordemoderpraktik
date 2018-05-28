@@ -45,7 +45,7 @@ export default class CategoryScreen extends React.Component {
   componentWillReceiveProps() {
     var exps = this.props.navigation.getParam('experiences');
     let json = this.props.navigation.getParam('json');
-    this.setState({ experiences: exps, experiencesJson: json });
+    this.setState({ experiences: exps, experiencesInitial: exps, experiencesJson: json });
   }
 
   dbGetUserRecord() {
@@ -81,8 +81,10 @@ export default class CategoryScreen extends React.Component {
     visibleModal: false,
     input: '',
     experiences: [],
+    experiencesInitial: [],
     experiencesJson: null,
-    userObject: {}
+    userObject: {},
+    searchText:''
   }
 
   _addExperience = () => {
@@ -99,11 +101,10 @@ export default class CategoryScreen extends React.Component {
             onChangeText={input => this.setState({ input })}
             value={this.state.input}
             selectTextOnFocus={true}
-            placeholder="Name"
+            placeholder="Title"
           />
       </View>
-      <Button //onPress={() => this.createNewExperience()}
-              onPress={() => this.setState({ visibleModal: false })}
+      <Button onPress={() => this.createNewExperience()}
               title='Submit'
               buttonStyle={{
               backgroundColor: "#496595",
@@ -116,16 +117,17 @@ export default class CategoryScreen extends React.Component {
   );
 
   createNewExperience = () => {
-    items.push(this.state.input);
+    var arr = this.state.experiences;
+    arr.push(this.state.input);
     this.setState({
       visibleModal: false,
-      input: ''
+      input: '',
+      experiences: arr
      });
   }
 
-  _keyExtractor = (item, index) => item.id;
-
   checkItem = item => {
+    console.log('CheckItem ' + item);
     const { checked } = this.state;
 
     if (!checked.includes(item)) {
@@ -188,6 +190,33 @@ export default class CategoryScreen extends React.Component {
     return obj;
   }
 
+  searchText = (text) => {
+    let txt = text;
+    let experienceList = this.state.experiencesInitial;
+
+    var filteredList = experienceList.filter((item) => {
+      if(item.match(txt))
+        return item;
+    })
+    if (!text || text === '') {
+      exps = this.state.experiencesInitial;
+      this.setState({
+        experiences: exps,
+      })
+      console.log(exps);
+    } else if (!filteredList.length) {
+     // set no data flag to true so as to render flatlist conditionally
+       this.setState({
+         experiences: {}
+       })
+    }
+    else if (Array.isArray(filteredList)) {
+      this.setState({
+        experiences: filteredList
+      })
+    }
+  }
+
   render() {
     return (
       <ImageBackground
@@ -198,10 +227,10 @@ export default class CategoryScreen extends React.Component {
         <SearchBar //ref={search => this.search = search}
           containerStyle={styles.searchBar}
           inputStyle={styles.inputStyle}
-          //platform='ios'
-          //onChangeText={}
-          //onClear={}
-          //onCancel={}
+          platform='ios'
+          onChangeText={(text) => { this.searchText(text) }}
+          onClear={() => console.log('On clear text')}
+          onCancel={() => console.log('On cancel text')}
           cancelIcon={true}
           cancelButtonTitle='Cancel'
           round
@@ -232,7 +261,7 @@ export default class CategoryScreen extends React.Component {
               renderItem={({ item }) => (
                 <CheckBox
                   title={item}
-                  onPress={() => console.log('Container pressed!')}
+                  onPress={() => console.log('Container pressed! ' + item)}
                   onIconPress={() => this.checkItem(item)}
                   checked={this.state.checked.includes(item)}
                   checkedColor='#496595'

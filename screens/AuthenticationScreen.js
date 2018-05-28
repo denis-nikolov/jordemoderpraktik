@@ -123,6 +123,7 @@ export default class example extends Component {
           Alert.alert('Success!', 'You have successfully verified your phone number');
         }, 100);
 
+        global.uid = "+45" + this.state.phone;
         this.props.navigation.navigate('Main');
 
       } catch (err) {

@@ -41,6 +41,7 @@ export default class CalendarScreen extends React.Component {
       dateTimePickerTitle: 'Pick date & time',
       visibleModal: false,
       input: '',
+      modalItemCount: 0,
     };
   }
 
@@ -92,7 +93,7 @@ export default class CalendarScreen extends React.Component {
         {
           list.map((item, i) => (
             <ListItem
-              onPress={() => this.setState({isDateTimePickerVisible: true})}
+              onPress={() => this.setState({isDateTimePickerVisible: true, modalItemCount: i})}
               containerStyle={styles.modalListItem1}
               chevronColor='#496595'
               key={i}
@@ -115,42 +116,38 @@ export default class CalendarScreen extends React.Component {
           borderRadius: 5, }}/>
 
           <DateTimePicker
-            date={new Date()}
+            date={this.state.hasDayPressed ? new Date(this.state.dayPressed) : new Date()}
             isVisible={this.state.isDateTimePickerVisible}
-            onConfirm={() => console.log('confirm')}
-            onCancel={() => console.log('canceled')}
+            onConfirm={this._handleDatePicked}
+            onCancel={() => this._hideDateTimePicker()}
             mode={'datetime'}
-            titleIOS={'this.state.dateTimePickerTitle'}
+            titleIOS={'Pick date & time'}
           />
       </View>
     </View>
   );
-
-  createEvent = () => {
-    this._showDateTimePicker();
-  }
 
   _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
 
   _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
 
   _handleDatePicked = (date) => {
-
-    if (!this.state.isDatePicked) {
-      this.state.item.strTime = this.timeToString(date);
-      this.state.item.from = this.formatTime(date.toISOString().split('T')[1]);
-      this.state.isDatePicked = true;
-    } else {
-      this.state.item.to = this.formatTime(date.toISOString().split('T')[1]);
-      this.state.dateTimePickerMode = 'datetime';
-      this.state.isDatePicked = false;
-      this._addItem();
-    }
-
-
-    this._hideDateTimePicker();
-    this._handleEndEvent();
-    console.log(this.state.item);
+    console.log('Item count: ' + this.state.modalItemCount + " Date: " + date);
+    // if (!this.state.isDatePicked) {
+    //   this.state.item.strTime = this.timeToString(date);
+    //   this.state.item.from = this.formatTime(date.toISOString().split('T')[1]);
+    //   this.state.isDatePicked = true;
+    // } else {
+    //   this.state.item.to = this.formatTime(date.toISOString().split('T')[1]);
+    //   this.state.dateTimePickerMode = 'datetime';
+    //   this.state.isDatePicked = false;
+    //   this._addItem();
+    // }
+    //
+    //
+    // this._hideDateTimePicker();
+    // this._handleEndEvent();
+    // console.log(this.state.item);
   }
 
   _handleEndEvent = () => {
