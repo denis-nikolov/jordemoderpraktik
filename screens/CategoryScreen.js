@@ -27,7 +27,6 @@ export default class CategoryScreen extends React.Component {
     title: 'Categories',
     headerStyle: {
       backgroundColor: '#add8e6',
-      //borderBottomColor: '#496595',
       borderBottomWidth: 0,
      },
     headerTitleStyle: { color: '#545454' },
@@ -100,7 +99,7 @@ export default class CategoryScreen extends React.Component {
                       onPress={() => this.goToExperienceScreen(i)}
                       key={i}
                       title={item}
-                      titleStyle={{ color: '#496595', marginRight: 0, marginLeft: 0 }}
+                      titleStyle={{ color: '#496595', marginLeft: 0, marginRight: 0, fontFamily: 'century-gothic', display: 'flex', }}
                       chevronColor='#496595'
                       rightIcon={{name: 'play-arrow'}}
                     />
@@ -126,5 +125,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderBottomWidth: 1,
     borderBottomColor: '#496595',
+    flexWrap: "wrap",
   }
 });
