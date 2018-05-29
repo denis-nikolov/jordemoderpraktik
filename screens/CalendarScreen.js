@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableWithoutFeedback, Text, View,
+import { TouchableWithoutFeedback, Text, View, Alert,
           ScrollView, StyleSheet, ImageBackground, Image, TouchableOpacity, KeyboardAvoidingView  } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { ListItem, FormInput, FormLabel, Button } from 'react-native-elements';
@@ -10,8 +10,10 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import Modal from 'react-native-modal';
 import TabBarIcon from '../components/TabBarIcon';
 import { Ionicons } from '@expo/vector-icons';
+import firebase from '@firebase/app';
+import '@firebase/firestore';
 
-const list = [
+var list = [
   {
     title: 'Start date and time',
     icon: 'av-timer',
@@ -23,13 +25,16 @@ const list = [
 ]
 
 export default class CalendarScreen extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
       items: {},
+      shifts: {},
       item: {
-        height: 50,
+        height: 60,
         strTime: '',
+        endTime: '',
         from: '',
         to: ''
       },
@@ -37,11 +42,13 @@ export default class CalendarScreen extends React.Component {
       hasDayPressed: false,
       isDateTimePickerVisible: false,
       dateTimePickerMode: 'datetime',
-      isDatePicked: false,
+      isStartDatePicked: false,
+      isEndDatePicked: false,
       dateTimePickerTitle: 'Pick date & time',
       visibleModal: false,
       input: '',
       modalItemCount: 0,
+      userObject: {}
     };
   }
 
@@ -71,6 +78,8 @@ export default class CalendarScreen extends React.Component {
     this.props.navigation.setParams({
       handleAddExperience: this._addExperience
     });
+
+    this.dbGetItems();
   }
 
   _addExperience = () => {
@@ -86,7 +95,7 @@ export default class CalendarScreen extends React.Component {
           inputStyle={styles.input}
           onChangeText={input => this.setState({ input })}
           value={this.state.input}
-          selectTextOnFocus={true}
+          selectTextOnFocus={false}
           placeholder="Name"/>
       </View>
       <View style={styles.modalListItem}>
@@ -105,7 +114,7 @@ export default class CalendarScreen extends React.Component {
       </View>
       <View>
         <Button
-          onPress={() => this.setState({ visibleModal: false })}
+          onPress={() => this._addItem()}
           title='Add to Calendar'
           buttonStyle={{
           backgroundColor: "#496595",
@@ -133,21 +142,20 @@ export default class CalendarScreen extends React.Component {
 
   _handleDatePicked = (date) => {
     console.log('Item count: ' + this.state.modalItemCount + " Date: " + date);
-    // if (!this.state.isDatePicked) {
-    //   this.state.item.strTime = this.timeToString(date);
-    //   this.state.item.from = this.formatTime(date.toISOString().split('T')[1]);
-    //   this.state.isDatePicked = true;
-    // } else {
-    //   this.state.item.to = this.formatTime(date.toISOString().split('T')[1]);
-    //   this.state.dateTimePickerMode = 'datetime';
-    //   this.state.isDatePicked = false;
-    //   this._addItem();
-    // }
-    //
-    //
-    // this._hideDateTimePicker();
-    // this._handleEndEvent();
-    // console.log(this.state.item);
+
+    if (this.state.modalItemCount == 0) {
+      this.state.item.strTime = this.timeToString(date);
+      this.state.item.from = this.formatTime(date.toISOString().split('T')[1]);
+      list[0].title = this.state.item.from + " " + this.state.item.strTime;
+    }
+    if (this.state.modalItemCount == 1) {
+      this.state.item.endTime = this.timeToString(date);
+      this.state.item.to = this.formatTime(date.toISOString().split('T')[1]);
+      list[1].title = this.state.item.to + " " + this.state.item.endTime;
+    }
+
+    console.log(this.state.item);
+    this._hideDateTimePicker();
   }
 
   _handleEndEvent = () => {
@@ -159,13 +167,73 @@ export default class CalendarScreen extends React.Component {
     }
   }
 
-  _addItem = () => {
-    this.state.items[this.state.item.strTime].push({
-      name: 'Shift:',
-      from: 'Starts ' + this.state.item.from,
-      to: 'Ends ' + this.state.item.to,
-      height: this.state.item.height
+  resetFields() {
+    this.setState({
+      item: {
+        height: 60,
+        strTime: '',
+        endTime: '',
+        from: '',
+        to: ''
+      }
     });
+    list[0].title = 'Start date and time';
+    list[1].title = 'End date and time';
+  }
+
+  _addItem = () => {
+    if (this.state.item.strTime != '') {
+      if (this.state.item.strTime == this.state.item.endTime) {
+        this.state.items[this.state.item.strTime].push({
+          name: 'Event:' + this.state.input,
+          from: 'Starts ' + this.state.item.from,
+          to: 'Ends ' + this.state.item.to,
+          height: this.state.item.height
+        });
+
+        if (!this.state.shifts[this.state.item.strTime])
+          this.state.shifts[this.state.item.strTime] = [];
+
+        this.state.shifts[this.state.item.strTime].push({
+          name: 'Event:' + this.state.input,
+          from: 'Starts ' + this.state.item.from,
+          to: 'Ends ' + this.state.item.to,
+          height: this.state.item.height
+        });
+
+      } else {
+        this.state.items[this.state.item.strTime].push({
+          name: 'Event:' + this.state.input,
+          from: 'Starts ' + this.state.item.from,
+          height: this.state.item.height
+        });
+        this.state.items[this.state.item.endTime].push({
+          name: 'Event:' + this.state.input,
+          to: 'Ends ' + this.state.item.to,
+          height: this.state.item.height
+        });
+
+        if (!this.state.shifts[this.state.item.strTime])
+          this.state.shifts[this.state.item.strTime] = [];
+        this.state.shifts[this.state.item.strTime].push({
+          name: 'Event:' + this.state.input,
+          from: 'Starts ' + this.state.item.from,
+          height: this.state.item.height
+        });
+
+        if (!this.state.shifts[this.state.item.endTime])
+          this.state.shifts[this.state.item.endTime] = [];
+        this.state.shifts[this.state.item.endTime].push({
+          name: 'Event:' + this.state.input,
+          to: 'Ends ' + this.state.item.to,
+          height: this.state.item.height
+        });
+      }
+      this.resetFields();
+      this.handleAddItem();
+    } else {
+      this.setState({ visibleModal: false });
+    }
   }
 
   loadItems(day) {
@@ -186,6 +254,79 @@ export default class CalendarScreen extends React.Component {
       });
     }, 1000);
     // console.log(`Load Items for ${day.year}-${day.month}`);
+  }
+
+  handleAddItem() {
+    var obj = this.state.userObject;
+    var shiftsObj = this.state.shifts;
+
+    if (Object.keys(obj).length === 0 && obj.constructor === Object ) {
+      obj['shifts'] = shiftsObj;
+      this.dbUpdateItems();
+    } else {
+      if (obj.hasOwnProperty('shifts')) {
+        this.appendShiftsObject();
+        this.dbUpdateItems();
+      } else {
+        obj['shifts'] = shiftsObj;
+        this.dbUpdateItems();
+      }
+    }
+  }
+
+  appendShiftsObject() {
+    var obj = this.state.userObject;
+    var objToUpdate = {};
+    objToUpdate['shifts'] = this.state.shifts;
+    var updatedObj = Object.assign(obj,objToUpdate);
+
+    this.setState({ userObject: updatedObj });
+  }
+
+  dbGetItems() {
+    var db = firebase.firestore();
+    var expRef = db.collection('users').doc(global.uid);
+    var getDoc = expRef.get()
+    .then(doc => {
+      if (!doc.exists) {
+        console.log('No such document!');
+      } else {
+        var obj = doc.data();
+        let jsonString = JSON.stringify(obj);
+        let json = JSON.parse(jsonString);
+        var count = Object.keys(obj);
+        for (var i in count) {
+          var key = Object.keys(obj)[i];
+
+          if (key == 'shifts') {
+            var fetchedShifts = json[key];
+            var itemsObj = this.state.items;
+            var nobj = Object.assign(itemsObj, fetchedShifts);
+            console.log('DBGET: ' + JSON.stringify(obj));
+            this.setState({ items: nobj, shifts: fetchedShifts});
+          }
+        }
+        this.setState({ userObject: obj });
+      }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
+  }
+
+  dbUpdateItems() {
+    var obj = this.state.userObject;
+    var db = firebase.firestore();
+    db.collection("users").doc(global.uid).set(obj);
+
+    Alert.alert('Congratulations!', "Successfully submitted.", [{
+      text: 'OK',
+      onPress: () => this._hideModal(),
+    }]);
+  }
+
+  _hideModal() {
+    this.setState({ visibleModal: false });
   }
 
   renderItem(item) {
@@ -254,17 +395,6 @@ export default class CalendarScreen extends React.Component {
           rowHasChanged={this.rowHasChanged.bind(this)}
           onDayPress={(day)=>{ this.setState({dayPressed: day["dateString"], hasDayPressed: true}); }}
         />
-
-        <TouchableWithoutFeedback>
-          <DateTimePicker
-            date={this.state.hasDayPressed ? new Date(this.state.dayPressed) : new Date()}
-            isVisible={this.state.isDateTimePickerVisible}
-            onConfirm={this._handleDatePicked}
-            onCancel={this._hideDateTimePicker}
-            mode={this.state.dateTimePickerMode}
-            titleIOS={this.state.dateTimePickerTitle}
-          />
-        </TouchableWithoutFeedback>
 
       </ImageBackground>
     );
