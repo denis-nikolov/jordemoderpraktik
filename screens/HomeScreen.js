@@ -260,7 +260,6 @@ export default class HomeScreen extends React.Component {
                      textStyle={{ fontSize: 20, fontFamily: 'century-gothic' }}
                      title="Submit"
                      color='#4B5D63'
-                     underlayColor='#fff'
                      onPress={this.onPressButtonBabies.bind(this, 'babies')}
                    />
                  </View>

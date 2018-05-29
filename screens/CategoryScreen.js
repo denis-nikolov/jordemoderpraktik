@@ -92,7 +92,7 @@ export default class CategoryScreen extends React.Component {
         style={{width: '100%', height: '103%'}}
       >
 
-            <ScrollView>
+            <ScrollView style={{ marginTop: 20 }}>
                 {
                   this.state.categories.map((item, i) => (
                     <ListItem
@@ -100,7 +100,8 @@ export default class CategoryScreen extends React.Component {
                       onPress={() => this.goToExperienceScreen(i)}
                       key={i}
                       title={item}
-                      chevronColor='#496595'
+                      titleStyle={{ color: '#fff' }}
+                      chevronColor='#fff'
                       rightIcon={{name: 'play-arrow'}}
                     />
                   ))
@@ -115,9 +116,14 @@ export default class CategoryScreen extends React.Component {
 
 const styles = StyleSheet.create({
   listItems: {
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 5,
+    paddingBottom: 5,
     paddingLeft: 0,
-    borderBottomColor:'#496595',
+    marginBottom: 20,
+    //backgroundColor:'#496595',
+    width: 340,
+    marginLeft: 10,
+    borderWidth: 1,
+    borderColor: '#496595',
   }
 });

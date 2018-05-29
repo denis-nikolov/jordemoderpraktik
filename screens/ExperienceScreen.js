@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon, ScrollView, StyleSheet, FlatList,
-        ImageBackground, Text, TouchableOpacity, View, Alert  } from 'react-native';
+        ImageBackground, Text, TouchableOpacity, View, Alert, KeyboardAvoidingView  } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { SearchBar, FormInput, FormLabel, ListItem, CheckBox, Button } from 'react-native-elements';
 import Modal from 'react-native-modal';// 2.4.0
@@ -34,9 +34,16 @@ export default class CategoryScreen extends React.Component {
     };
   };
 
-  goToInfoExperienceScreen() {
-    console.log('neshto')
-    this.props.navigation.navigate('InfoExperience');
+  state = {
+    checked: [],
+    visibleModal: false,
+    input: '',
+    experiences: [],
+    experiencesInitial: [],
+    experiencesJson: null,
+    userObject: {},
+    searchText:'',
+    isInfoModal: false,
   }
 
   componentWillMount() {
@@ -81,19 +88,8 @@ export default class CategoryScreen extends React.Component {
     }]);
   }
 
-  state = {
-    checked: [],
-    visibleModal: false,
-    input: '',
-    experiences: [],
-    experiencesInitial: [],
-    experiencesJson: null,
-    userObject: {},
-    searchText:''
-  }
-
   _addExperience = () => {
-    this.setState({ visibleModal: true });
+    this.setState({ isInfoModal: false, visibleModal: true });
   }
 
   _renderModalContent = () => (
@@ -117,8 +113,55 @@ export default class CategoryScreen extends React.Component {
               height: 45,
               borderColor: "transparent",
               borderWidth: 0,
-              borderRadius: 5, }}/>
+              borderRadius: 5, }}
+              textStyle={{ fontSize: 18, fontFamily: 'lato' }}/>
     </View>
+  );
+
+  _renderModalInfoExp = () => (
+        <View style={styles.modalInfoExp}>
+          <Text style={styles.labelInInfoModal}>How many times have you done this experience today?</Text>
+          <View style={{ flex: 1, flexDirection: 'row', marginBottom: 30}}>
+            <FormInput
+             containerStyle={{
+               borderBottomWidth: 0,
+               height: 51,
+               backgroundColor: '#fff',
+               borderRadius: 5,
+               flex: 1,
+               justifyContent: 'center',
+               alignItems: 'center',
+               width: 100,
+               marginLeft: 25,
+             }}
+             inputStyle={{
+               width: 100,
+               height: 51,
+               justifyContent: 'center',
+               fontSize: 26,
+               fontFamily: 'century-gothic',
+               alignSelf: 'center',
+             }}
+             onChangeText={input => this.setState({ input })}
+             value={this.state.input}
+             selectTextOnFocus={true}
+             keyboardType="numeric"
+           />
+           <Button
+             buttonStyle={{
+               backgroundColor: '#496595',
+               width: 125,
+               borderColor: "#496595",
+               borderWidth: 1,
+               borderRadius: 5,
+               marginRight: 10,
+             }}
+             textStyle={{ fontSize: 20, fontFamily: 'lato' }}
+             title="Submit"
+             color='#fff'
+           />
+         </View>
+        </View>
   );
 
   createNewExperience = () => {
@@ -245,8 +288,6 @@ export default class CategoryScreen extends React.Component {
         <View style={styles.container1}>
           <Modal
             isVisible={this.state.visibleModal}
-            //backdropColor={'red'}
-            //backdropOpacity={1}
             animationIn={'zoomInDown'}
             animationOut={'zoomOutUp'}
             animationInTiming={1000}
@@ -255,7 +296,7 @@ export default class CategoryScreen extends React.Component {
             backdropTransitionOutTiming={1000}
             onBackdropPress={() => this.setState({ visibleModal: false })}
           >
-            {this._renderModalContent()}
+            {this.state.isInfoModal ? this._renderModalInfoExp() : this._renderModalContent()}
           </Modal>
         </View>
 
@@ -267,12 +308,13 @@ export default class CategoryScreen extends React.Component {
               renderItem={({ item }) => (
                 <CheckBox
                   title={item}
-                  onPress={() => this.goToInfoExperienceScreen()}
+                  onPress={() => this.setState({ isInfoModal:true, visibleModal: true })}
                   onIconPress={() => this.checkItem(item)}
                   checked={this.state.checked.includes(item)}
                   checkedColor='#496595'
                   containerStyle={styles.checkbox}
                   textStyle={styles.textCheckbox}
+                  size={26}
                   uncheckedColor='#383838'
                 />
               )}
@@ -288,7 +330,8 @@ export default class CategoryScreen extends React.Component {
                 marginBottom: 30,
                 marginTop: 10,
                 borderWidth: 0,
-                borderRadius: 30, }}/>
+                borderRadius: 30, }}
+                textStyle={{ fontSize: 18, fontFamily: 'lato' }}/>
         </ScrollView>
 
       </ImageBackground>
@@ -311,6 +354,8 @@ const styles = StyleSheet.create({
   },
   textCheckbox: {
     color: '#383838',
+    fontFamily: 'century-gothic',
+    fontSize: 16,
   },
   searchBar: {
     backgroundColor: 'transparent',
@@ -319,8 +364,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   inputStyle: {
-    backgroundColor: '#606060',
-    color: '#DCDCDC',
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: "#757272",
+    color: '#383838',
+    fontFamily: 'century-gothic',
   },
   modalContent: {
     backgroundColor: '#d3b3b8',
@@ -330,12 +378,31 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
+  modalInfoExp: {
+    backgroundColor: '#d3b3b8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    height: 180,
+  },
   labelInModal: {
     fontSize: 18,
     color: '#3f3f3f',
     fontWeight: 'bold',
     fontStyle: 'italic',
+    justifyContent: 'center',
     marginBottom: 20,
+    fontFamily: 'century-gothic',
+  },
+  labelInInfoModal: {
+    fontSize: 18,
+    color: '#3f3f3f',
+    fontWeight: 'bold',
+    flex: 1,
+    alignSelf: 'center',
+    marginTop: 30,
+    marginBottom: 20,
+    fontFamily: 'century-gothic',
   },
   form: {
     marginBottom: 20,
@@ -345,6 +412,8 @@ const styles = StyleSheet.create({
   input: {
     color: '#545454',
     width: 300,
+    fontFamily: 'century-gothic',
+    fontSize: 16,
   },
   addExperienceIcon: {
     width: 20,

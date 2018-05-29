@@ -8,7 +8,6 @@ import CategoryScreen from '../screens/CategoryScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ExperienceScreen from '../screens/ExperienceScreen';
-import InfoExperienceScreen from '../screens/InfoExperienceScreen';
 
 
 const HomeStack = createStackNavigator({
@@ -46,7 +45,6 @@ HomeStack.navigationOptions = {
 const CategoryStack = createStackNavigator({
   Category: CategoryScreen,
   Experience: ExperienceScreen,
-  InfoExperience: InfoExperienceScreen,
 });
 
 CategoryStack.navigationOptions = {
