@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Platform, ScrollView, StyleSheet,
-  Text, TouchableOpacity, View, Dimensions, Alert,
+  Text, TouchableOpacity, View, Dimensions, Alert, TouchableWithoutFeedback,
   ImageBackground, Picker, AsyncStorage, KeyboardAvoidingView, TouchableHighlight  } from 'react-native';
 import { MonoText } from '../components/StyledText';
 import * as Progress from 'react-native-progress';
@@ -8,6 +8,8 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Modal from 'react-native-modal';
 import { FormInput, Button } from 'react-native-elements';
 import { Stopwatch } from 'react-native-stopwatch-timer'
+
+currentTime = null;
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -21,22 +23,41 @@ export default class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.toggleStopwatch = this.toggleStopwatch.bind(this);
-    this.resetStopwatch = this.resetStopwatch.bind(this);
+      this.toggleStopwatch = this.toggleStopwatch.bind(this);
+      this.resetStopwatch = this.resetStopwatch.bind(this);
     }
 
     toggleStopwatch() { //here enable the other button instead of toggling the same
-      this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false});
+
+      this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false, startButtonDisabled: true });
     }
 
     resetStopwatch() {
-      this.setState({stopwatchStart: false, stopwatchReset: true});
+      this.state.currentTime = currentTime.substring(6,8);
+      console.log(this.state.currentTime);
+      this.onPressButtonHours();
+      this.setState({startButtonDisabled: false, stopwatchStart: false, stopwatchReset: true});
     }
 
     getFormattedTime(time) {
-        this.currentTime = time;
+      currentTime = time;
     };
 
+    state = {
+      progress: 0,
+      progressWithOnComplete: 0,
+      hours: 0,
+      babies: 0,
+      visibleModal: false,
+      semester: '',
+      input: '',
+      stopwatchStart: false,
+      totalDuration: 90000,
+      timerReset: false,
+      stopwatchReset: false,
+      startButtonDisabled: false,
+      currentTime: null,
+    }
 
   componentDidMount() {
     this.setSemester();
@@ -48,55 +69,26 @@ export default class HomeScreen extends React.Component {
     global.uid = "+4560530103";
   }
 
-  state = {
-    progress: 20,
-    progressWithOnComplete: 40,
-    hours: 50,
-    babies: 15,
-    visibleModal: false,
-    semester: '',
-    input: '',
-      stopwatchStart: false,
-      totalDuration: 90000,
-      timerReset: false,
-      stopwatchReset: false,
-  }
-
   onPressButtonHours = () => {
-    if (this.state.hours <= 294) {
-      this.setState({
-          hours: this.state.hours + 6,
-          progress: this.state.progress + 2,
-      });
-    } else {
-      Alert.alert('Hey!', 'You have already fulfilled your hours!');
-    }
+    var time = this.state.currentTime;
+    var intTime = parseInt(time);
+    console.log(intTime);
+
+    this.setState({
+        hours: this.state.hours + intTime,
+        progress: this.state.progress + intTime * 0.33,
+    });
   }
 
   onPressButtonBabies = () => {
-    if(this.state.babies <= 39) {
-      this.setState({
-          babies: this.state.babies + 1,
-          progressWithOnComplete: this.state.progressWithOnComplete + 2.5
-      });
-    }
-  }
+    var addedBabies = parseInt(this.state.input);
 
-  _renderModalContent = () => (
-    <View style={styles.modalContent}>
-      <Text style={styles.labelInModal}>Name:</Text>
-      <Picker
-         style={{ height: 50, width: 100 }}
-         onValueChange={(itemValue, itemIndex) => console.log(itemValue)}>
-         <Picker.Item label="Semester 02" value="2" />
-         <Picker.Item label="Semester 04" value="4" />
-         <Picker.Item label="Semester 06" value="6" />
-      </Picker>
-      <Button onPress={() => this.createNewExperience()}
-                title='Select'
-                style={styles.button}/>
-    </View>
-  );
+    this.setState({
+        babies: this.state.babies + addedBabies,
+        progressWithOnComplete: this.state.progressWithOnComplete + addedBabies * 2.5,
+        input: ''
+    });
+  }
 
   render() {
 
@@ -108,7 +100,7 @@ export default class HomeScreen extends React.Component {
         padding: 5,
       },
       text: {
-        fontSize: 18,
+        fontSize: 26,
         fontFamily: 'century-gothic',
         color: '#fff',
         marginLeft: 130,
@@ -118,23 +110,6 @@ export default class HomeScreen extends React.Component {
       return (
       <ImageBackground source={require('../assets/images/background_gradient.jpg')}
       style={{width: '100%', height: '103%'}}>
-
-        <View style={styles.container1}>
-          <Modal
-            isVisible={this.state.visibleModal}
-            //backdropColor={'red'}
-            //backdropOpacity={1}
-            animationIn={'zoomInDown'}
-            animationOut={'zoomOutUp'}
-            animationInTiming={1000}
-            animationOutTiming={1000}
-            backdropTransitionInTiming={1000}
-            backdropTransitionOutTiming={1000}
-            onBackdropPress={() => this.setState({ visibleModal: false })}
-          >
-            {this._renderModalContent()}
-          </Modal>
-        </View>
 
         <ScrollView>
 
@@ -150,6 +125,9 @@ export default class HomeScreen extends React.Component {
                   backgroundColorOnComplete="#496595"
                   barAnimationDuration={800}
                   borderRadius={0}
+                  onComplete={() => {
+                    Alert.alert('Hey!', 'You have already fulfilled your hours!');
+                  }}
                 />
               </View>
               <View style={styles.secondBarContainer}>
@@ -169,10 +147,12 @@ export default class HomeScreen extends React.Component {
                 />
               </View>
 
-              <Stopwatch start={this.state.stopwatchStart}
+              <Stopwatch
+                start={this.state.stopwatchStart}
                 reset={this.state.stopwatchReset}
                 getTime={this.getFormattedTime}
-                options={options}/>
+                options={options}
+              />
 
               <View style={styles.buttonsContainer}>
                 <View>
@@ -188,6 +168,7 @@ export default class HomeScreen extends React.Component {
                     title="Start Shift"
                     color='#4B5D63'
                     underlayColor='#fff'
+                    disabled={this.state.startButtonDisabled}
                     //onPress={this.onPressButtonHours.bind(this, 'hours')}
                     onPress={this.toggleStopwatch}
                   >{!this.state.stopwatchStart}
@@ -219,6 +200,7 @@ export default class HomeScreen extends React.Component {
               >
                 <View style={{ marginTop: 120 }}>
                   <Text style={styles.label1}>Babies delivered today:</Text>
+                  <TouchableWithoutFeedback>
                   <View style={{ flex: 1, flexDirection: 'row', width: 335 }}>
                     <FormInput
                      containerStyle={{
@@ -263,6 +245,7 @@ export default class HomeScreen extends React.Component {
                      onPress={this.onPressButtonBabies.bind(this, 'babies')}
                    />
                  </View>
+                 </TouchableWithoutFeedback>
                 </View>
                 <View style={{ height: 110 }} />
               </KeyboardAvoidingView>
@@ -300,7 +283,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginBottom: 10,
     fontFamily: 'century-gothic',
-
   },
   label1: {
     color: '#4B5D63',
