@@ -100,8 +100,8 @@ export default class CategoryScreen extends React.Component {
                       onPress={() => this.goToExperienceScreen(i)}
                       key={i}
                       title={item}
-                      titleStyle={{ color: '#fff' }}
-                      chevronColor='#fff'
+                      titleStyle={{ color: '#496595', marginRight: 0 }}
+                      chevronColor='#496595'
                       rightIcon={{name: 'play-arrow'}}
                     />
                   ))
@@ -117,13 +117,14 @@ export default class CategoryScreen extends React.Component {
 const styles = StyleSheet.create({
   listItems: {
     paddingTop: 5,
+    paddingRight: 0,
     paddingBottom: 5,
     paddingLeft: 0,
     marginBottom: 20,
-    //backgroundColor:'#496595',
-    width: 340,
+    marginRight: 10,
     marginLeft: 10,
-    borderWidth: 1,
-    borderColor: '#496595',
+    borderTopWidth: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: '#496595',
   }
 });
