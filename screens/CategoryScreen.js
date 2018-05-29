@@ -100,7 +100,7 @@ export default class CategoryScreen extends React.Component {
                       onPress={() => this.goToExperienceScreen(i)}
                       key={i}
                       title={item}
-                      titleStyle={{ color: '#496595', marginRight: 0 }}
+                      titleStyle={{ color: '#496595', marginRight: 0, marginLeft: 0 }}
                       chevronColor='#496595'
                       rightIcon={{name: 'play-arrow'}}
                     />
