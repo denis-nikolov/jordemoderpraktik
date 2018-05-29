@@ -20,7 +20,7 @@ export default class CategoryScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
     return {
-      headerTitle: 'Experience',
+      headerTitle: 'Experiences',
       headerStyle: {
         backgroundColor: '#add8e6',
         borderBottomWidth: 0,
@@ -33,6 +33,11 @@ export default class CategoryScreen extends React.Component {
       ),
     };
   };
+
+  goToInfoExperienceScreen() {
+    console.log('neshto')
+    this.props.navigation.navigate('InfoExperience');
+  }
 
   componentWillMount() {
     this.props.navigation.setParams({
@@ -258,10 +263,11 @@ export default class CategoryScreen extends React.Component {
             <FlatList style={styles.container}
               data={this.state.experiences}
               extraData={this.state}
+
               renderItem={({ item }) => (
                 <CheckBox
                   title={item}
-                  onPress={() => console.log('Container pressed! ' + item)}
+                  onPress={() => this.goToInfoExperienceScreen()}
                   onIconPress={() => this.checkItem(item)}
                   checked={this.state.checked.includes(item)}
                   checkedColor='#496595'
