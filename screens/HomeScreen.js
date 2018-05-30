@@ -8,6 +8,8 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Modal from 'react-native-modal';
 import { FormInput, Button } from 'react-native-elements';
 import { Stopwatch } from 'react-native-stopwatch-timer'
+import firebase from '@firebase/app';
+import '@firebase/firestore';
 
 currentTime = null;
 
@@ -21,8 +23,8 @@ export default class HomeScreen extends React.Component {
     headerTitleStyle: { color: '#545454' },
   };
 
-  constructor(props) {
-    super(props);
+    constructor(props) {
+      super(props);
       this.toggleStopwatch = this.toggleStopwatch.bind(this);
       this.resetStopwatch = this.resetStopwatch.bind(this);
     }
@@ -50,7 +52,7 @@ export default class HomeScreen extends React.Component {
       babies: 0,
       visibleModal: false,
       semester: '',
-      input: '',
+      input: null,
       stopwatchStart: false,
       totalDuration: 90000,
       timerReset: false,
@@ -58,11 +60,12 @@ export default class HomeScreen extends React.Component {
       startButtonDisabled: false,
       endButtonDisabled: true,
       currentTime: null,
+      userObject: {},
     }
 
   componentDidMount() {
     this.setSemester();
-
+    this.dbGetUserRecord();
   }
 
   setSemester() {
@@ -70,24 +73,80 @@ export default class HomeScreen extends React.Component {
     global.uid = "+4560530103";
   }
 
+  dbGetUserRecord() {
+    var db = firebase.firestore();
+    var expRef = db.collection('users').doc(global.uid);
+    var getDoc = expRef.get()
+    .then(doc => {
+      if (!doc.exists) {
+        console.log('No such document!');
+      } else {
+        var obj = doc.data();
+        var babies = obj['babies'];
+        var hours = obj['hours'];
+
+        this.setState({
+          userObject: obj,
+          babies,
+          progressWithOnComplete: babies * 2.5,
+          progress: hours * 0.33
+        })
+
+        console.log(JSON.stringify(this.state.userObject));
+      }
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+    });
+  }
+
+  dbCreateUserRecord() {
+    var obj = this.state.userObject;
+    var db = firebase.firestore();
+    db.collection("users").doc(global.uid).set(obj);
+
+    Alert.alert('Congratulations!', "Successfully submitted.", [{
+      text: 'OK',
+      onPress: () => console.log('asd')
+    }]);
+  }
+
   onPressButtonHours = () => {
     var time = this.state.currentTime;
     var intTime = parseInt(time);
     console.log(intTime);
 
+    this.state.userObject['hours'] = this.state.hours + intTime;
+
     this.setState({
         hours: this.state.hours + intTime,
         progress: this.state.progress + intTime * 0.33,
     });
+
+    this.dbCreateUserRecord();
   }
 
   onPressButtonBabies = () => {
-    var addedBabies = parseInt(this.state.input);
 
+    if (!isNaN(parseInt(this.state.input))) {
+      var addedBabies = parseInt(this.state.input);
+
+      this.state.userObject['babies'] = this.state.babies + addedBabies;
+
+      this.setState({
+          babies: this.state.babies + addedBabies,
+          progressWithOnComplete: this.state.progressWithOnComplete + addedBabies * 2.5,
+          input: null
+      });
+
+      this.dbCreateUserRecord();
+      console.log(JSON.stringify(this.state.userObject));
+    }
+  }
+
+  calculateBabiesProgress() {
     this.setState({
-        babies: this.state.babies + addedBabies,
-        progressWithOnComplete: this.state.progressWithOnComplete + addedBabies * 2.5,
-        input: ''
+        progressWithOnComplete: this.state.babies * 2.5
     });
   }
 
