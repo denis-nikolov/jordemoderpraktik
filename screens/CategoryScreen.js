@@ -42,10 +42,22 @@ export default class CategoryScreen extends React.Component {
     if (this.state.fsDocument == null) {
       this.dbGetDocument();
     } else {
+      this.dbCommit();
       var obj = this.state.fsDocument;
       var newStateArray = Object.keys(obj);
       this.setState({ fsDocument: obj, categories: newStateArray });
     }
+  }
+
+  dbCommit(){
+    var obj = this.state.fsDocument;
+    var db = firebase.firestore();
+    db.collection("experiences").doc('sem04').set(obj);
+
+    Alert.alert('Congratulations!', "Successfully submitted.", [{
+      text: 'OK',
+      onPress: () => console.log('asd')
+    }]);
   }
 
   dbGetDocument() {
@@ -67,7 +79,7 @@ export default class CategoryScreen extends React.Component {
           exps.push(obj[key]);
         }
         var newStateArray = Object.keys(obj);
-        this.setState({ fsDocument: json, categories: newStateArray, experiences: exps });
+        this.setState({ fsDocument: obj, categories: newStateArray, experiences: exps });
       }
     })
     .catch(err => {

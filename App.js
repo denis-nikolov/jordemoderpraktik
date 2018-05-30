@@ -32,6 +32,7 @@ export default class App extends React.Component {
     return Promise.all([
       Asset.loadAsync([
         require('./assets/images/background_gradient.jpg'),
+        require('./assets/sem02_pdf.html')
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar

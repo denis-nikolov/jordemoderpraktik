@@ -23,6 +23,7 @@
     "react-native-firebase": "^4.1.0",
     "react-native-fontawesome": "^5.7.0",
     "react-native-form": "^2.1.2",
+    "react-native-html-parser": "0.0.5",
     "react-native-loading-spinner-overlay": "^0.5.2",
     "react-native-modal-datetime-picker": "^5.1.0",
     "react-native-phone-auth-component": "^0.1.0",
