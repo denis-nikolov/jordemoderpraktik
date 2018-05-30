@@ -287,6 +287,7 @@ export default class CategoryScreen extends React.Component {
 
         <View style={styles.container1}>
           <Modal
+            style={{ justifyContent: 'flex-start', marginTop: 200 }}
             isVisible={this.state.visibleModal}
             animationIn={'zoomInDown'}
             animationOut={'zoomOutUp'}

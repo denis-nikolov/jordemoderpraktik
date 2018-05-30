@@ -29,14 +29,14 @@ export default class HomeScreen extends React.Component {
 
     toggleStopwatch() { //here enable the other button instead of toggling the same
 
-      this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false, startButtonDisabled: true });
+      this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false, startButtonDisabled: true, endButtonDisabled: false });
     }
 
     resetStopwatch() {
       this.state.currentTime = currentTime.substring(6,8);
       console.log(this.state.currentTime);
       this.onPressButtonHours();
-      this.setState({startButtonDisabled: false, stopwatchStart: false, stopwatchReset: true});
+      this.setState({startButtonDisabled: false, stopwatchStart: false, stopwatchReset: true, endButtonDisabled: true});
     }
 
     getFormattedTime(time) {
@@ -56,6 +56,7 @@ export default class HomeScreen extends React.Component {
       timerReset: false,
       stopwatchReset: false,
       startButtonDisabled: false,
+      endButtonDisabled: true,
       currentTime: null,
     }
 
@@ -103,7 +104,7 @@ export default class HomeScreen extends React.Component {
         fontSize: 26,
         fontFamily: 'century-gothic',
         color: '#fff',
-        marginLeft: 130,
+        marginLeft: 118,
         marginTop: 10
       }
     };
@@ -169,7 +170,7 @@ export default class HomeScreen extends React.Component {
                     color='#4B5D63'
                     underlayColor='#fff'
                     disabled={this.state.startButtonDisabled}
-                    //onPress={this.onPressButtonHours.bind(this, 'hours')}
+                    disabledStyle={{ backgroundColor: 'transparent', opacity: 0.6 }}
                     onPress={this.toggleStopwatch}
                   >{!this.state.stopwatchStart}
                   </Button>
@@ -187,9 +188,8 @@ export default class HomeScreen extends React.Component {
                     title="End Shift"
                     color='#4B5D63'
                     underlayColor='#fff'
-                    //disabled={true}
-                    //disabledStyle={{ backgroundColor: 'transparent', opacity: 0.6 }}
-                    //onPress={this.onPressButtonBabies.bind(this, 'babies')}
+                    disabled={this.state.endButtonDisabled}
+                    disabledStyle={{ backgroundColor: 'transparent', opacity: 0.6 }}
                     onPress={this.resetStopwatch}
                   />
                 </View>
@@ -237,7 +237,7 @@ export default class HomeScreen extends React.Component {
                        borderWidth: 1,
                        borderRadius: 5,
                        marginLeft: 13,
-                       marginRight: 2
+                       marginRight: 2,
                      }}
                      textStyle={{ fontSize: 20, fontFamily: 'century-gothic' }}
                      title="Submit"
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   label: {
     color: '#4B5D63',

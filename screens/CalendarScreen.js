@@ -122,7 +122,8 @@ export default class CalendarScreen extends React.Component {
           height: 45,
           borderColor: "transparent",
           borderWidth: 0,
-          borderRadius: 5, }}/>
+          borderRadius: 5, }}
+          textStyle={{ fontSize: 18, fontFamily: 'lato' }}/>
 
           <DateTimePicker
             date={this.state.hasDayPressed ? new Date(this.state.dayPressed) : new Date()}
@@ -365,7 +366,7 @@ export default class CalendarScreen extends React.Component {
         source={require('../assets/images/background_gradient.jpg')}
         style={{width: '100%', height: '103%'}}>
 
-        <View style={styles.container1}>
+        <View>
           <Modal
             style={{ justifyContent: 'flex-start', marginTop: 120, }}
             isVisible={this.state.visibleModal}
@@ -437,6 +438,7 @@ const styles = StyleSheet.create({
    color: '#3f3f3f',
    fontWeight: 'bold',
    fontStyle: 'italic',
+   fontFamily: 'century-gothic',
  },
  form: {
    marginBottom: 20,
@@ -446,6 +448,7 @@ const styles = StyleSheet.create({
  input: {
    color: '#545454',
    width: 300,
+   fontFamily: 'century-gothic',
  },
  addExperienceIcon: {
    width: 20,
