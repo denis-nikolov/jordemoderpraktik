@@ -49,17 +49,6 @@ export default class CategoryScreen extends React.Component {
     }
   }
 
-  dbCommit(){
-    var obj = this.state.fsDocument;
-    var db = firebase.firestore();
-    db.collection("experiences").doc('sem04').set(obj);
-
-    Alert.alert('Congratulations!', "Successfully submitted.", [{
-      text: 'OK',
-      onPress: () => console.log('asd')
-    }]);
-  }
-
   dbGetDocument() {
     var semester = global.semester;
     var db = firebase.firestore();
