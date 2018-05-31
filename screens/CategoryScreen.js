@@ -49,17 +49,6 @@ export default class CategoryScreen extends React.Component {
     }
   }
 
-  dbCommit(){
-    var obj = this.state.fsDocument;
-    var db = firebase.firestore();
-    db.collection("experiences").doc('sem04').set(obj);
-
-    Alert.alert('Congratulations!', "Successfully submitted.", [{
-      text: 'OK',
-      onPress: () => console.log('asd')
-    }]);
-  }
-
   dbGetDocument() {
     var semester = global.semester;
     var db = firebase.firestore();
@@ -110,6 +99,7 @@ export default class CategoryScreen extends React.Component {
                       containerStyle={styles.listItems}
                       onPress={() => this.goToExperienceScreen(i)}
                       key={i}
+                      titleNumberOfLines={2}
                       title={item}
                       titleStyle={{ color: '#496595', marginLeft: 0, marginRight: 0, fontFamily: 'century-gothic', display: 'flex', }}
                       chevronColor='#496595'
@@ -131,7 +121,7 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     paddingBottom: 5,
     paddingLeft: 0,
-    marginBottom: 20,
+    marginBottom: 15,
     marginRight: 10,
     marginLeft: 10,
     borderTopWidth: 0,

@@ -52,7 +52,7 @@ export default class HomeScreen extends React.Component {
       babies: 0,
       visibleModal: false,
       semester: '',
-      input: null,
+      input: '',
       stopwatchStart: false,
       totalDuration: 90000,
       timerReset: false,
@@ -83,11 +83,16 @@ export default class HomeScreen extends React.Component {
       } else {
         var obj = doc.data();
         var babies = obj['babies'];
-        var hours = obj['hours'];
+        var hours = 0;
+
+        if (!isNaN(parseInt(obj['hours']))) {
+          hours = obj['hours'];
+        }
 
         this.setState({
           userObject: obj,
           babies,
+          hours,
           progressWithOnComplete: babies * 2.5,
           progress: hours * 0.33
         })
@@ -111,12 +116,24 @@ export default class HomeScreen extends React.Component {
     var intTime = parseInt(time);
     console.log(intTime);
 
-    this.state.userObject['hours'] = this.state.hours + intTime;
+    var sum = this.state.hours + intTime;
 
-    this.setState({
-        hours: this.state.hours + intTime,
-        progress: this.state.progress + intTime * 0.33,
-    });
+    if (!isNaN(sum)) {
+      this.state.userObject['hours'] = this.state.hours + intTime;
+
+      this.setState({
+          hours: this.state.hours + intTime,
+          progress: this.state.progress + intTime * 0.33,
+      });
+
+    } else {
+        this.state.userObject['hours'] = intTime;
+
+        this.setState({
+            hours: intTime,
+            progress: intTime * 0.33,
+        });
+    }
 
     this.dbCreateUserRecord();
   }
@@ -126,13 +143,25 @@ export default class HomeScreen extends React.Component {
     if (!isNaN(parseInt(this.state.input))) {
       var addedBabies = parseInt(this.state.input);
 
-      this.state.userObject['babies'] = this.state.babies + addedBabies;
+      var sum = this.state.babies + addedBabies
 
-      this.setState({
-          babies: this.state.babies + addedBabies,
-          progressWithOnComplete: this.state.progressWithOnComplete + addedBabies * 2.5,
-          input: null
-      });
+      if (!isNaN(sum)) {
+        this.state.userObject['babies'] = this.state.babies + addedBabies;
+
+        this.setState({
+            babies: this.state.babies + addedBabies,
+            progressWithOnComplete: this.state.progressWithOnComplete + addedBabies * 2.5,
+            input: null
+        });
+      } else {
+        this.state.userObject['babies'] = addedBabies;
+
+        this.setState({
+            babies: addedBabies,
+            progressWithOnComplete: addedBabies * 2.5,
+            input: null
+        });
+      }
 
       this.dbCreateUserRecord();
       console.log(JSON.stringify(this.state.userObject));
