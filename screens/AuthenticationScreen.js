@@ -44,16 +44,16 @@ export default class example extends Component {
   }
 
   componentWillMount() {
-    var config = {
-      apiKey: "AIzaSyAZzqPWgp3AfMfnYOS9_TPofwfBT716Qrk",
-      authDomain: "drink-and-drive.firebaseapp.com",
-      databaseURL: "https://drink-and-drive.firebaseio.com",
-      projectId: "drink-and-drive",
-      storageBucket: "drink-and-drive.appspot.com",
-      messagingSenderId: "943601859777"
-    };
-
-    firebase.initializeApp(config);
+    // var config = {
+    //   apiKey: "AIzaSyAZzqPWgp3AfMfnYOS9_TPofwfBT716Qrk",
+    //   authDomain: "drink-and-drive.firebaseapp.com",
+    //   databaseURL: "https://drink-and-drive.firebaseio.com",
+    //   projectId: "drink-and-drive",
+    //   storageBucket: "drink-and-drive.appspot.com",
+    //   messagingSenderId: "943601859777"
+    // };
+    //
+    // firebase.initializeApp(config);
   }
 
   _getCode = () => {
@@ -76,7 +76,7 @@ export default class example extends Component {
           enterCode: true
         });
 
-        this.refs.form.refs.textInput.setNativeProps({ text: '' });
+        this.refs.form.refs.textInput.setNativeProps({ defaultValue: '' });
 
         setTimeout(() => {
           Alert.alert('Sent!', "We've sent you a verification code", [{
@@ -248,7 +248,7 @@ export default class example extends Component {
                 autoCapitalize={'none'}
                 autoCorrect={false}
                 onChangeText={this._onChangeText}
-                placeholder={this.state.enterCode ? '_ _ _ _ _ _' : 'Phone Number'}
+                placeholder={this.state.enterCode ? '_ _ _ _' : 'Phone Number'}
                 keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
                 style={[ styles.textInput, textStyle ]}
                 returnKeyType='go'
