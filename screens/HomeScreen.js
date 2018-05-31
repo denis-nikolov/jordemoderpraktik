@@ -104,11 +104,6 @@ export default class HomeScreen extends React.Component {
     var obj = this.state.userObject;
     var db = firebase.firestore();
     db.collection("users").doc(global.uid).set(obj);
-
-    Alert.alert('Congratulations!', "Successfully submitted.", [{
-      text: 'OK',
-      onPress: () => console.log('asd')
-    }]);
   }
 
   onPressButtonHours = () => {

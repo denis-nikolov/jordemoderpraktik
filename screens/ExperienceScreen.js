@@ -8,6 +8,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import { Ionicons } from '@expo/vector-icons';
 import firebase from '@firebase/app';
 import '@firebase/firestore';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 
 require('@firebase/firestore');
@@ -44,13 +45,15 @@ export default class CategoryScreen extends React.Component {
     userObject: {},
     searchText:'',
     isInfoModal: false,
+    pressedItem: null,
+    isDateTimePickerVisible: false,
+    pickedDate: null,
   }
 
   componentWillMount() {
     this.props.navigation.setParams({
       handleAddExperience: this._addExperience
     });
-
     this.dbGetUserRecord();
   }
 
@@ -69,7 +72,10 @@ export default class CategoryScreen extends React.Component {
         console.log('No such document!');
       } else {
         var obj = doc.data();
-        this.setState({ userObject: obj })
+        var jsonString = JSON.stringify(obj);
+        var json = JSON.parse(jsonString);
+        this.setState({ userObject: json });
+        console.log(JSON.stringify(this.state.userObject));
       }
     })
     .catch(err => {
@@ -83,9 +89,9 @@ export default class CategoryScreen extends React.Component {
     db.collection("users").doc(global.uid).set(obj);
 
     Alert.alert('Congratulations!', "Successfully submitted.", [{
-      text: 'OK',
-      onPress: () => console.log('asd')
-    }]);
+        text: 'OK',
+        onPress: () => this.onSuccessSubmit() ,
+      }]);
   }
 
   _addExperience = () => {
@@ -156,6 +162,7 @@ export default class CategoryScreen extends React.Component {
                borderRadius: 5,
                marginRight: 10,
              }}
+             onPress={() => this.onPressTimesExp()}
              textStyle={{ fontSize: 20, fontFamily: 'lato' }}
              title="Submit"
              color='#fff'
@@ -163,6 +170,25 @@ export default class CategoryScreen extends React.Component {
          </View>
         </View>
   );
+
+  onPressTimesExp() {
+    var times = parseInt(this.state.input);
+
+    if (!isNaN(times)) {
+      this.checkItem(this.state.pressedItem);
+      var arr = this.state.checked;
+      for (var i = 0; i < times; i++ ) {
+        arr.push(this.state.pressedItem);
+      }
+      this.setState({ checked: arr });
+      console.log(this.state.checked);
+    }
+
+    this.setState({
+      visibleModal: false,
+      input: ''
+    })
+  }
 
   createNewExperience = () => {
     var arr = this.state.experiences;
@@ -185,31 +211,49 @@ export default class CategoryScreen extends React.Component {
     }
   }
 
-  submitExperiences = () => {
+  submitExperiences = (date) => {
     var obj = this.state.userObject;
     var semester = global.semester;
-    var expObj = this.createExperiencesObject();
+    var expObj = this.createExperiencesObject(date);
 
-
-    if (Object.keys(obj).length === 0 && obj.constructor === Object ) {
-      obj[semester] = expObj;
-      this.dbCreateUserRecord();
-    } else {
-      if (obj.hasOwnProperty(semester)) {
-        this.appendExperiencesObject();
-        this.dbCreateUserRecord();
-      } else {
+    if (this.state.checked.length > 0) {
+      if (Object.keys(obj) === 0 && obj.constructor === Object ) {
+        console.log('here');
         obj[semester] = expObj;
         this.dbCreateUserRecord();
+      } else {
+        if (obj.hasOwnProperty(semester)) {
+          this.appendExperiencesObject(date);
+          this.dbCreateUserRecord();
+        } else {
+          obj[semester] = expObj;
+          this.dbCreateUserRecord();
+        }
       }
+      //this.onSuccessSubmit();
+    } else {
+      Alert.alert('Nothing to submit', "Please check atleast one", [{
+        text: 'OK',
+        onPress: () => this.setState({
+          checked: []
+        }),
+      }]);
     }
   }
 
-  appendExperiencesObject() {
+  onSuccessSubmit() {
+    this._hideDateTimePicker();
+    this.setState({
+      checked: [],
+    });
+  }
+
+  appendExperiencesObject(datee) {
     var obj = this.state.userObject;
     var arr = this.state.checked;
     var semester = global.semester;
-    var date = new Date();
+    var date = datee;
+    console.log(date);
     date = date.toISOString().split('T')[0];
 
     arr.forEach(function(entry) {
@@ -226,16 +270,25 @@ export default class CategoryScreen extends React.Component {
     this.setState({ userObject: obj });
   }
 
-  createExperiencesObject() {
+  createExperiencesObject(datee) {
     var obj = {};
     var arr = this.state.checked;
-    const date = new Date();
+    var date = datee;
 
     arr.forEach(function(entry) {
       obj[entry] = date.toISOString().split('T')[0];
     });
 
+    //this.setState({ user})
     return obj;
+  }
+
+  _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+  _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+  _handleDatePicked = (date) => {
+    this.submitExperiences(date);
   }
 
   searchText = (text) => {
@@ -309,7 +362,7 @@ export default class CategoryScreen extends React.Component {
               renderItem={({ item }) => (
                 <CheckBox
                   title={item}
-                  onPress={() => this.setState({ isInfoModal:true, visibleModal: true })}
+                  onPress={() => this.setState({ pressedItem: item, isInfoModal:true, visibleModal: true })}
                   onIconPress={() => this.checkItem(item)}
                   checked={this.state.checked.includes(item)}
                   checkedColor='#496595'
@@ -323,7 +376,7 @@ export default class CategoryScreen extends React.Component {
             />
             <Button
                 title='Submit'
-                onPress={() => this.submitExperiences()}
+                onPress={() => this._showDateTimePicker()}
                 buttonStyle={{
                 backgroundColor: '#496595',
                 height: 45,
@@ -334,6 +387,15 @@ export default class CategoryScreen extends React.Component {
                 borderRadius: 30, }}
                 textStyle={{ fontSize: 18, fontFamily: 'lato' }}/>
         </ScrollView>
+
+        <DateTimePicker
+          date={new Date()}
+          isVisible={this.state.isDateTimePickerVisible}
+          onConfirm={this._handleDatePicked}
+          onCancel={() => this._hideDateTimePicker()}
+          mode={'date'}
+          titleIOS={'Pick date & time'}
+        />
 
       </ImageBackground>
     );
