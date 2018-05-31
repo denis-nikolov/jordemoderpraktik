@@ -110,6 +110,7 @@ export default class CategoryScreen extends React.Component {
                       containerStyle={styles.listItems}
                       onPress={() => this.goToExperienceScreen(i)}
                       key={i}
+                      titleNumberOfLines={2}
                       title={item}
                       titleStyle={{ color: '#496595', marginLeft: 0, marginRight: 0, fontFamily: 'century-gothic', display: 'flex', }}
                       chevronColor='#496595'
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     paddingBottom: 5,
     paddingLeft: 0,
-    marginBottom: 20,
+    marginBottom: 15,
     marginRight: 10,
     marginLeft: 10,
     borderTopWidth: 0,
